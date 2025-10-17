@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Questions
+src/components/AssessmentPage/Questions/AssessmentQs.tsx

@@ -1,57 +1,8 @@
 import { useState } from 'react';
 import Navbar from "../Navbar/navbar";
 import Questioncard from "./QuestionCard/questioncard";
+import { AssessmentQuestionsSH } from './Questions/AssessmentQs';
 
-const AssessmentQuestions = [
-    {
-        question: "Apakah Anda terkadang merasa sakit kepala?",
-        options: [
-            "Ya",
-            "Tidak"
-        ],
-        weight: 2
-    },
-    {
-        question: "Apakah Anda merasa cemas atau khawatir?",
-        options: [
-            "Ya",
-            "Tidak"
-        ],
-        weight: 3
-    },
-    {
-        question: "Apakah Anda merasa sedih atau putus asa?",
-        options: [
-            "Ya",
-            "Tidak"
-        ],
-        weight: 4
-    },
-    {
-        question: "Apakah Anda mengalami kesulitan tidur?",
-        options: [
-            "Ya",
-            "Tidak"
-        ],
-        weight: 1
-    },
-    {
-        question: "Apakah Anda merasa kehilangan minat pada aktivitas yang biasanya Anda nikmati?",
-        options: [
-            "Ya",
-            "Tidak"
-        ],
-        weight: 3
-    },
-    {
-        question: "Apakah Anda merasa sulit berkonsentrasi?",
-        options: [
-            "Ya",
-            "Tidak"
-        ],
-        weight: 2
-    }
-];
 
 interface Answer {
     questionIndex: number;
@@ -74,7 +25,7 @@ function assessmentPage() {
         setAnswers(prev => [...prev, newAnswer]);
 
         
-        if (currentQuestionIndex < AssessmentQuestions.length - 1) {
+    if (currentQuestionIndex < AssessmentQuestionsSH.length - 1) {
             setTimeout(() => {
                 setCurrentQuestionIndex(prev => prev + 1);
             }, 1200);
@@ -90,21 +41,21 @@ function assessmentPage() {
     };
 
     const getScoreInterpretation = (score: number) => {
-        if (score <= 3) {
+        if (score <= 5) {
             return {
                 level: 'Rendah',
                 color: 'text-green-600',
                 bgColor: 'bg-green-50',
                 borderColor: 'border-green-200',
-                description: 'Tingkat stres Anda tergolong rendah. Tetap jaga kesehatan mental Anda dengan pola hidup sehat.'
+                description: 'Tindakan-Tindakan Anda tergolong Aman. Tetap jaga kesehatan mental Anda dengan pola hidup sehat.'
             };
-        } else if (score <= 8) {
+        } else if (score <= 11) {
             return {
                 level: 'Sedang',
                 color: 'text-yellow-600',
                 bgColor: 'bg-yellow-50',
                 borderColor: 'border-yellow-200',
-                description: 'Tingkat stres Anda tergolong sedang. Pertimbangkan untuk melakukan aktivitas relaksasi dan berkonsultasi jika diperlukan.'
+                description: 'Anda menunjukkan tanda-tanda self-harm ringan. Kurangi stres dan pertimbangkan untuk berkonsultasi dengan profesional kesehatan mental.'
             };
         } else {
             return {
@@ -112,7 +63,7 @@ function assessmentPage() {
                 color: 'text-red-600',
                 bgColor: 'bg-red-50',
                 borderColor: 'border-red-200',
-                description: 'Tingkat stres Anda tergolong tinggi. Sangat disarankan untuk berkonsultasi dengan profesional kesehatan mental.'
+                description: 'Anda menunjukkan tanda-tanda self-harm serius. Segera cari bantuan profesional.'
             };
         }
     };
@@ -139,7 +90,7 @@ function assessmentPage() {
 
                             <div className={`${interpretation.bgColor} ${interpretation.borderColor} border-2 rounded-xl p-6 mb-6`}>
                                 <h3 className="text-xl font-bold text-gray-800 mb-2">Hasil Assessment Anda</h3>
-                                <div className="text-4xl font-bold mb-2 text-gray-800">{score}/15</div>
+                                <div className="text-4xl font-bold mb-2 text-gray-800">{score}/22</div>
                                 <div className={`text-lg font-semibold ${interpretation.color} mb-3`}>
                                     Tingkat Stres: {interpretation.level}
                                 </div>
@@ -168,11 +119,11 @@ function assessmentPage() {
         <>
             <Navbar />
             <Questioncard
-                question={AssessmentQuestions[currentQuestionIndex].question}
-                options={AssessmentQuestions[currentQuestionIndex].options}
-                weight={AssessmentQuestions[currentQuestionIndex].weight}
+                question={AssessmentQuestionsSH[currentQuestionIndex].question}
+                options={AssessmentQuestionsSH[currentQuestionIndex].options}
+                weight={AssessmentQuestionsSH[currentQuestionIndex].weight}
                 questionNumber={currentQuestionIndex + 1}
-                totalQuestions={AssessmentQuestions.length}
+                totalQuestions={AssessmentQuestionsSH.length}
                 onAnswer={handleAnswer}
             />
         </>

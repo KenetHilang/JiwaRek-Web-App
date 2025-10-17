@@ -1,11 +1,10 @@
 import { useState } from 'react';
 import logo from '../../assets/jiwarek_logo.png'
-import AnimationEffect from '../../animations/fadein';
 import { Link } from 'react-router-dom';
 
 const navLinks = [
-    { name: 'Assessments', href: '/assessment' },
-    { name: 'Materials', href: '/materials' },
+    { name: 'Assessments', href: '/assessment'},
+    { name: 'Materials', href: '/materials'},
     { name: 'Contact', href: '/contact'},
 ];
 
@@ -17,14 +16,14 @@ function navbar() {
     };
 
     return (
-        <AnimationEffect reverse={true} delay={0.3}>
-            <nav className='fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100 z-50 transition-all duration-300'>
-                <div className='container mx-auto px-4 py-3'>
+            <nav className='fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100 z-[100] transition-all duration-300'>
+                <div className='mx-auto px-5 py-3'>
                     <div className='flex justify-between items-center'>
                     
                         <div className='flex items-center space-x-3 group'>
                             <div className='relative'>
                                 <img 
+                                    onClick={ () => window.location.href = '/' }
                                     className='h-[30px] object-contain transition-transform duration-300 group-hover:scale-110' 
                                     src={logo} 
                                     alt="JiwaRek Logo" 
@@ -34,7 +33,7 @@ function navbar() {
 
                         
                         <div className='hidden md:flex items-center space-x-1'>
-                            {navLinks.map((link, index) => (
+                            {navLinks.map((link) => (
                                 <Link key={link.name} to={link.href} className='group relative px-4 py-2 rounded-lg font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 hover:bg-blue-50'>
                                     <span className='flex items-center space-x-2'>
                                         <span>{link.name}</span>
@@ -82,7 +81,6 @@ function navbar() {
                     </div>
                 </div>
             </nav>
-        </AnimationEffect>
     );
 }
 
