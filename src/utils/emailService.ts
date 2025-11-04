@@ -1,0 +1,52 @@
+import emailjs from '@emailjs/browser';
+
+export const EMAILJS_CONFIG = {
+    SERVICE_ID: import.meta.env.VITE_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_KEY',
+    TEMPLATE_ID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_KEY',
+    PUBLIC_KEY: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY',
+};
+
+export const initEmailJS = () => {
+    emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+};
+
+interface EmailData {
+    assessmentType: string;
+    score: string;
+    maxScore: string;
+    level: string;
+    description: string;
+    userName: string;
+    date: string;
+    hospitalEmail: string;
+    userEmail?: string;
+}
+
+export const sendAssessmentEmail = async (emailData: EmailData): Promise<boolean> => {
+    try {
+        const templateParams = {
+            hospital_email: emailData.hospitalEmail,
+            patient_name: emailData.userName,
+            assessment_type: emailData.assessmentType,
+            assessment_date: emailData.date,
+            score: emailData.score,
+            max_score: emailData.maxScore,
+            result_level: emailData.level,
+            interpretation: emailData.description,
+            submission_time: new Date().toLocaleTimeString('id-ID'),
+        };
+
+        const response = await emailjs.send(
+            EMAILJS_CONFIG.SERVICE_ID,
+            EMAILJS_CONFIG.TEMPLATE_ID,
+            templateParams,
+            EMAILJS_CONFIG.PUBLIC_KEY
+        );
+
+        console.log('Report sent successfully:', response);
+        return true;
+    } catch (error) {
+        console.error('Failed to send report:', error);
+        return false;
+    }
+};

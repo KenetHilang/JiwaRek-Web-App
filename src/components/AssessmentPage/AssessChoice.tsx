@@ -22,9 +22,25 @@ function AssessChoice() {
             available: true
         },
         {
+            id: 'srq20',
+            title: 'SRQ-20 Mental Health Screening',
+            description: 'Asesmen untuk mendeteksi gangguan mental emosional dan distres psikologis. 20 pertanyaan, estimasi 7 menit.',
+            icon: (
+                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+            ),
+            bgColor: 'bg-purple-50',
+            borderColor: 'border-purple-200',
+            iconColor: 'text-purple-600',
+            hoverColor: 'hover:border-purple-400',
+            route: '/assessment/srq20',
+            available: true
+        },
+        {
             id: 'self-harm',
             title: 'Self-Harm Assessment',
-            description: 'Asesmen untuk mengidentifikasi perilaku self-harm. 22 pertanyaan, estimasi 8 menit.',
+            description: 'Asesmen untuk mengidentifikasi perilaku self-harm dan pikiran bunuh diri. 22 pertanyaan, estimasi 8 menit.',
             icon: (
                 <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -36,22 +52,6 @@ function AssessChoice() {
             hoverColor: 'hover:border-red-400',
             route: '/assessment/self-harm',
             available: true
-        },
-        {
-            id: 'coming-soon',
-            title: 'Anxiety Assessment',
-            description: 'Asesmen untuk mengukur tingkat kecemasan. Segera hadir!',
-            icon: (
-                <svg className="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            ),
-            bgColor: 'bg-gray-50',
-            borderColor: 'border-gray-200',
-            iconColor: 'text-gray-400',
-            hoverColor: 'hover:border-gray-300',
-            route: '#',
-            available: false
         }
     ];
 

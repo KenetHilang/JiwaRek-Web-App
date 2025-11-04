@@ -27,12 +27,12 @@ function Questioncard({ question, options, weight, questionNumber, totalQuestion
         
         setTimeout(() => {
             onAnswer(option, weight);
-        }, 800);
+        }, 200);
     };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-            <div className="w-full max-w-2xl mx-auto">
+            <div className="w-full max-w-4xl mx-auto">
                 {/* Progress Bar */}
                 <div className="mb-8">
                     <div className="flex justify-between items-center mb-2">
@@ -53,7 +53,7 @@ function Questioncard({ question, options, weight, questionNumber, totalQuestion
 
                 {/* Question Card */}
                 <div className="bg-white rounded-2xl shadow-xl p-8 transform transition-all duration-300 hover:shadow-2xl">
-                    <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-8 text-center leading-relaxed">
+                    <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-8 text-center leading-relaxed">
                         {question}
                     </h2>
                     
@@ -63,7 +63,7 @@ function Questioncard({ question, options, weight, questionNumber, totalQuestion
                                 key={index}
                                 onClick={() => handleOptionSelect(option)}
                                 disabled={isAnswered}
-                                className={`w-full p-4 rounded-xl text-left text-lg font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] ${
+                                className={`w-full p-4 rounded-xl text-left text-md font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] ${
                                     selectedOption === option
                                         ? 'bg-blue-600 text-white shadow-lg'
                                         : isAnswered

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Navbar from "../Navbar/navbar";
 import Questioncard from "./QuestionCard/questioncard";
-import { AssessmentQuestionsDepression } from './Questions/AssessmentQs';
+import { AssessmentQuestionsSRQ } from './Questions/AssessmentQs';
 import { sendAssessmentEmail } from '../../utils/emailService';
 
 
@@ -11,7 +11,7 @@ interface Answer {
     weight: number;
 }
 
-function assessmentPagePHQ() {
+function assessmentPageSRQ() {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState<Answer[]>([]);
     const [isCompleted, setIsCompleted] = useState(false);
@@ -22,44 +22,24 @@ function assessmentPagePHQ() {
     
     const HOSPITAL_EMAIL = 'hospital@example.com';
 
-    const handleAnswer = (answer: string) => {
-        let calculatedWeight = 0;
-        
-        if (answer === 'Tidak pernah') {
-            calculatedWeight = 0;
-        } else if (answer === 'Beberapa hari') {
-            calculatedWeight = 1;
-        } else if (answer === 'Lebih dari separuh waktu yang dimaksud') {
-            calculatedWeight = 2;
-        } else if (answer === 'Hampir setiap hari') {
-            calculatedWeight = 3;
-        } else if (answer === 'Sangat tidak sulit') {
-            calculatedWeight = 0;
-        } else if (answer === 'Sedikit sulit') {
-            calculatedWeight = 1;
-        } else if (answer === 'Sangat sulit') {
-            calculatedWeight = 2;
-        } else if (answer === 'Luar biasa sulit') {
-            calculatedWeight = 3;
-        }
-
+    const handleAnswer = (answer: string, weight: number) => {
         const newAnswer: Answer = {
             questionIndex: currentQuestionIndex,
             answer,
-            weight: calculatedWeight
+            weight: answer === 'Ya' ? weight : 0
         };
 
         setAnswers(prev => [...prev, newAnswer]);
 
         
-    if (currentQuestionIndex < AssessmentQuestionsDepression.length - 1) {
+    if (currentQuestionIndex < AssessmentQuestionsSRQ.length - 1) {
             setTimeout(() => {
                 setCurrentQuestionIndex(prev => prev + 1);
-            }, 1200);
+            }, 100);
         } else {
             setTimeout(() => {
                 setIsCompleted(true);
-            }, 1200);
+            }, 800);
         }
     };
 
@@ -68,46 +48,21 @@ function assessmentPagePHQ() {
     };
 
     const getScoreInterpretation = (score: number) => {
-        if (score <= 4) {
+        if (score < 6) {
             return {
-                level: 'Rendah',
+                level: 'Normal',
                 color: 'text-green-600',
                 bgColor: 'bg-green-50',
                 borderColor: 'border-green-200',
-                description: 'Anda tidak menunjukkan tanda-tanda depresi. Tetap jaga kesehatan mental Anda dengan pola hidup sehat.'
+                description: 'Anda tidak mengalami gangguan mental emosional atau distres psikologis yang signifikan. Tetap jaga kesehatan mental Anda dengan pola hidup sehat.'
             };
-        } else if (score <= 9) {
+        } else {
             return {
-                level: 'Ringan',
-                color: 'text-green-700',
-                bgColor: 'bg-green-100',
-                borderColor: 'border-green-300',
-                description: 'Anda menunjukkan tanda-tanda depresi ringan. Kurangi stres dan berikan waktu untuk diri sendiri.'
-            };
-        } else if (score <= 14) {
-            return {
-                level: 'Sedang',
-                color: 'text-yellow-600',
-                bgColor: 'bg-yellow-50',
-                borderColor: 'border-yellow-200',
-                description: 'Anda menunjukkan tanda-tanda depresi sedang. Pertimbangkan untuk berkonsultasi dengan profesional kesehatan mental.'
-            };
-        } else if (score <= 19) {
-            return {
-                level: 'Sedang Berat',
+                level: 'Berpotensi Mengalami Gangguan',
                 color: 'text-red-600',
                 bgColor: 'bg-red-50',
                 borderColor: 'border-red-200',
-                description: 'Anda menunjukkan tanda-tanda depresi sedang berat. Pertimbangkan untuk mencari bantuan profesional.'
-            };
-        }
-        else {
-            return {
-                level: 'Berat',
-                color: 'text-red-700',
-                bgColor: 'bg-red-100',
-                borderColor: 'border-red-300',
-                description: 'Anda menunjukkan tanda-tanda depresi berat. Segera cari bantuan profesional.'
+                description: 'Anda menunjukkan tanda-tanda gangguan mental emosional atau distres psikologis. Sangat disarankan untuk berkonsultasi dengan profesional kesehatan mental untuk evaluasi lebih lanjut.'
             };
         }
     };
@@ -123,9 +78,9 @@ function assessmentPagePHQ() {
         const interpretation = getScoreInterpretation(score);
         
         const emailData = {
-            assessmentType: 'PHQ-9 Depression Screening',
+            assessmentType: 'SRQ-20 Mental Health Screening',
             score: score.toString(),
-            maxScore: '27',
+            maxScore: '20',
             level: interpretation.level,
             description: interpretation.description,
             hospitalEmail: HOSPITAL_EMAIL,
@@ -158,7 +113,7 @@ function assessmentPagePHQ() {
         return (
             <>
                 <Navbar />
-                <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4 sm:mt-10 mt-16">
+                <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4 mt-12">
                     <div className="w-full max-w-4xl mx-auto">
                         <div className="bg-white rounded-2xl shadow-xl p-6 text-center">
                             <div className="mb-4">
@@ -168,14 +123,14 @@ function assessmentPagePHQ() {
                                     </svg>
                                 </div>
                                 <h2 className="text-2xl font-bold text-gray-800 mb-1">Assessment Selesai!</h2>
-                                <p className="text-sm text-gray-600">Terima kasih telah menyelesaikan assessment kesehatan mental</p>
+                                <p className="text-sm text-gray-600">Terima kasih telah menyelesaikan SRQ-20 assessment</p>
                             </div>
 
                             <div className={`${interpretation.bgColor} ${interpretation.borderColor} border-2 rounded-xl p-5 mb-4`}>
                                 <h3 className="text-lg font-bold text-gray-800 mb-1">Hasil Assessment Anda</h3>
-                                <div className="text-3xl font-bold mb-1 text-gray-800">{score}/27</div>
+                                <div className="text-3xl font-bold mb-1 text-gray-800">{score}/20</div>
                                 <div className={`text-base font-semibold ${interpretation.color} mb-2`}>
-                                    Tingkat Depresi: {interpretation.level}
+                                    Status: {interpretation.level}
                                 </div>
                                 <p className="text-sm text-gray-700">{interpretation.description}</p>
                             </div>
@@ -228,13 +183,13 @@ function assessmentPagePHQ() {
                             )}
 
                             {emailSent && (
-                                <div className="mb-4 p-3 bg-green-50 border-2 border-green-200 rounded-xl">
-                                    <div className="flex items-center gap-2 text-green-700">
-                                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                <div className="mb-4 p-4 bg-green-50 rounded-xl border-2 border-green-200">
+                                    <p className="text-green-700 font-medium text-sm flex items-center justify-center gap-2">
+                                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
-                                        <span className="text-sm font-medium">Email berhasil dikirim!</span>
-                                    </div>
+                                        Laporan berhasil dikirim ke rumah sakit!
+                                    </p>
                                 </div>
                             )}
 
@@ -261,16 +216,16 @@ function assessmentPagePHQ() {
             <Navbar />
             <div className="mt-16">
                 <Questioncard
-                    question={AssessmentQuestionsDepression[currentQuestionIndex].question}
-                    options={AssessmentQuestionsDepression[currentQuestionIndex].options}
-                    weight={AssessmentQuestionsDepression[currentQuestionIndex].weight}
+                    question={AssessmentQuestionsSRQ[currentQuestionIndex].question}
+                    options={AssessmentQuestionsSRQ[currentQuestionIndex].options}
+                    weight={AssessmentQuestionsSRQ[currentQuestionIndex].weight}
                     questionNumber={currentQuestionIndex + 1}
-                    totalQuestions={AssessmentQuestionsDepression.length}
+                    totalQuestions={AssessmentQuestionsSRQ.length}
                     onAnswer={handleAnswer}
-                />            
+                />
             </div>
         </>
     );
 }
 
-export default assessmentPagePHQ;
+export default assessmentPageSRQ;
