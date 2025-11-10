@@ -3,6 +3,7 @@ import emailjs from '@emailjs/browser';
 export const EMAILJS_CONFIG = {
     SERVICE_ID: import.meta.env.VITE_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_KEY',
     TEMPLATE_ID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_KEY',
+    CONTACT_TEMPLATE_ID: import.meta.env.VITE_EMAILJS_CONTACT_TEMPLATE_ID || 'YOUR_CONTACT_TEMPLATE_KEY',
     PUBLIC_KEY: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY',
 };
 
@@ -20,6 +21,14 @@ interface EmailData {
     date: string;
     hospitalEmail: string;
     userEmail?: string;
+}
+
+interface ContactData {
+    name: string;
+    email: string;
+    time: string;
+    phone: string;
+    message: string;
 }
 
 export const sendAssessmentEmail = async (emailData: EmailData): Promise<boolean> => {
@@ -47,6 +56,29 @@ export const sendAssessmentEmail = async (emailData: EmailData): Promise<boolean
         return true;
     } catch (error) {
         console.error('Failed to send report:', error);
+        return false;
+    }
+};
+
+export const sendContactEmail = async (contactData: ContactData): Promise<boolean> => {
+    try {
+        const templateParams = {
+            contact_name: contactData.name,
+            contact_email: contactData.email,
+            contact_phone: contactData.phone,
+            contact_message: contactData.message,
+            submission_time: contactData.time,
+        };
+        const response = await emailjs.send(
+            EMAILJS_CONFIG.SERVICE_ID,
+            EMAILJS_CONFIG.CONTACT_TEMPLATE_ID,
+            templateParams,
+            EMAILJS_CONFIG.PUBLIC_KEY
+        );
+        console.log('Contact message sent successfully:', response);
+        return true;
+    } catch (error) {
+        console.error('Failed to send contact message:', error);
         return false;
     }
 };

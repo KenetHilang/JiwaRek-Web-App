@@ -8,6 +8,7 @@ import AssessmentPagePHQ from './components/AssessmentPage/AssessPagePHQ.tsx'
 import AssessmentPageSRQ from './components/AssessmentPage/AssessPageSRQ.tsx'
 import ErrorPage from './components/ErrorPage/Error.tsx'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
+import ContactPage from './components/ContactPage/contactPage.tsx'
 
 const router = createBrowserRouter([
   {
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
   {
     path: '/assessment/srq20',
     element: <AssessmentPageSRQ />,
+  },
+  {
+    path: '/contact',
+    element: <ContactPage />,
   },
   {
     path: '/*',

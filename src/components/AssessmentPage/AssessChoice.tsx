@@ -63,7 +63,7 @@ function AssessChoice() {
 
     return (
         <>
-            <Navbar />
+            <Navbar currentPage="Assessments" />
             <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pt-20 sm:pt-24 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center ">
                 <div className="w-full max-w-7xl mx-auto">
                     {/* Header */}

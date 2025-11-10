@@ -3,17 +3,22 @@ import logo from '../../assets/jiwarek_logo.png'
 import { Link } from 'react-router-dom';
 
 const navLinks = [
-    { name: 'Assessments', href: '/assessment'},
-    { name: 'Materials', href: '/materials'},
-    { name: 'Contact', href: '/contact'},
+    { name: 'Assessments', href: '/assessment', current: false},
+    { name: 'Materials', href: '/materials', current: false},
+    { name: 'Contact', href: '/contact', current: false},
 ];
 
-function navbar() {
+function navbar({ currentPage }: { currentPage?: string }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
+
+    navLinks.forEach(link => {
+        link.current = (link.name === currentPage);
+    });
+
 
     return (
             <nav className='fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100 z-[100] transition-all duration-300'>
@@ -36,7 +41,7 @@ function navbar() {
                             {navLinks.map((link) => (
                                 <Link key={link.name} to={link.href} className='group relative px-4 py-2 rounded-lg font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 hover:bg-blue-50'>
                                     <span className='flex items-center space-x-2'>
-                                        <span>{link.name}</span>
+                                        <span className={`${link.current ? 'font-bold text-blue-600' : ''}`}>{link.name}</span>
                                     </span>
                                 </Link>
                             ))}
