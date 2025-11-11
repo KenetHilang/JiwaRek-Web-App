@@ -19,8 +19,6 @@ function assessmentPageSRQ() {
     const [isSendingEmail, setIsSendingEmail] = useState(false);
     const [emailSent, setEmailSent] = useState(false);
     const [showEmailForm, setShowEmailForm] = useState(false);
-    
-    const HOSPITAL_EMAIL = 'hospital@example.com';
 
     const handleAnswer = (answer: string, weight: number) => {
         const newAnswer: Answer = {
@@ -83,9 +81,7 @@ function assessmentPageSRQ() {
             maxScore: '20',
             level: interpretation.level,
             description: interpretation.description,
-            hospitalEmail: HOSPITAL_EMAIL,
             userName: userName,
-            userEmail: HOSPITAL_EMAIL,
             date: new Date().toLocaleDateString('id-ID', { 
                 weekday: 'long', 
                 year: 'numeric', 
