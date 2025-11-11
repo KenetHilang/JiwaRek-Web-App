@@ -1,10 +1,10 @@
 import emailjs from '@emailjs/browser';
 
 export const EMAILJS_CONFIG = {
-    SERVICE_ID: import.meta.env.VITE_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_KEY',
-    TEMPLATE_ID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_KEY',
-    CONTACT_TEMPLATE_ID: import.meta.env.VITE_EMAILJS_CONTACT_TEMPLATE_ID || 'YOUR_CONTACT_TEMPLATE_KEY',
-    PUBLIC_KEY: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY',
+    SERVICE_ID: import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_9ebawez',
+    TEMPLATE_ID: import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_rpx39ir',
+    CONTACT_TEMPLATE_ID: import.meta.env.VITE_EMAILJS_CONTACT_TEMPLATE_ID || 'template_6603v78',
+    PUBLIC_KEY: import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'bryq6na8G8BW-lxXu',
 };
 
 export const initEmailJS = () => {
@@ -19,7 +19,6 @@ interface EmailData {
     description: string;
     userName: string;
     date: string;
-    hospitalEmail: string;
     userEmail?: string;
 }
 
@@ -34,7 +33,6 @@ interface ContactData {
 export const sendAssessmentEmail = async (emailData: EmailData): Promise<boolean> => {
     try {
         const templateParams = {
-            hospital_email: emailData.hospitalEmail,
             patient_name: emailData.userName,
             assessment_type: emailData.assessmentType,
             assessment_date: emailData.date,
