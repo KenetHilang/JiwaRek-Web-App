@@ -6,9 +6,14 @@ import AssessChoice from './components/AssessmentPage/AssessChoice.tsx'
 import AssessmentPageSH from './components/AssessmentPage/AssessPageSH.tsx'
 import AssessmentPagePHQ from './components/AssessmentPage/AssessPagePHQ.tsx'
 import AssessmentPageSRQ from './components/AssessmentPage/AssessPageSRQ.tsx'
+import AssessResultPage from './components/AssessmentPage/Resultpage/AssessResultPage.tsx'
 import ErrorPage from './components/ErrorPage/Error.tsx'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 import ContactPage from './components/ContactPage/contactPage.tsx'
+import { initEmailJS } from './utils/emailService.ts'
+
+// Initialize EmailJS
+initEmailJS();
 
 const router = createBrowserRouter([
   {
@@ -30,6 +35,10 @@ const router = createBrowserRouter([
   {
     path: '/assessment/srq20',
     element: <AssessmentPageSRQ />,
+  },
+  {
+    path: '/assessment/result',
+    element: <AssessResultPage />,
   },
   {
     path: '/contact',

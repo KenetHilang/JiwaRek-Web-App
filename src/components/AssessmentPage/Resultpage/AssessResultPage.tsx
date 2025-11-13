@@ -1,0 +1,173 @@
+import { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import Navbar from "../../Navbar/navbar";
+import { sendAssessmentEmail } from '../../../utils/emailService';
+
+interface LocationState {
+    score: number;
+    maxScore: string;
+    assessmentType: string;
+    level: string;
+    description: string;
+    color: string;
+    bgColor: string;
+    borderColor: string;
+    returnPath: string;
+}
+
+function AssessResultPage() {
+    const location = useLocation();
+    const navigate = useNavigate();
+    const state = location.state as LocationState;
+    
+    const [userName, setUserName] = useState('');
+    const [isSendingEmail, setIsSendingEmail] = useState(false);
+    const [emailSent, setEmailSent] = useState(false);
+    const [showEmailForm, setShowEmailForm] = useState(false);
+
+    if (!state || state.score === undefined) {
+        navigate('/assessment');
+        return null;
+    }
+
+    const { score, maxScore, assessmentType, level, description, color, bgColor, borderColor, returnPath } = state;
+
+    const handleSendEmail = async () => {
+        if (!userName) {
+            alert('Mohon isi nama Anda');
+            return;
+        }
+
+        setIsSendingEmail(true);
+        
+        const emailData = {
+            assessmentType: assessmentType,
+            score: score.toString(),
+            maxScore: maxScore,
+            level: level,
+            description: description,
+            userName: userName,
+            date: new Date().toLocaleDateString('id-ID', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            }),
+        };
+
+        const success = await sendAssessmentEmail(emailData);
+        setIsSendingEmail(false);
+        
+        if (success) {
+            setEmailSent(true);
+            setShowEmailForm(false);
+            alert('Laporan assessment telah dikirim ke rumah sakit!');
+        } else {
+            alert('Gagal mengirim laporan. Silakan coba lagi atau screenshot hasil Anda.');
+        }
+    };
+
+    return (
+        <>
+            <Navbar />
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4 pt-20 sm:pt-24">
+                <div className="w-full max-w-4xl mx-auto">
+                    <div className="bg-white rounded-2xl shadow-xl p-6 sm:p-8 text-center">
+                        <div className="mb-4 sm:mb-6">
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                                <svg className="w-8 h-8 sm:w-10 sm:h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1 sm:mb-2">Assessment Selesai!</h2>
+                            <p className="text-sm sm:text-base text-gray-600">Terima kasih telah menyelesaikan {assessmentType}</p>
+                        </div>
+
+                        <div className={`${bgColor} ${borderColor} border-2 rounded-xl p-5 sm:p-6 mb-4 sm:mb-6`}>
+                            <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 sm:mb-2">Hasil Assessment Anda</h3>
+                            <div className="text-3xl sm:text-4xl font-bold mb-1 sm:mb-2 text-gray-800">{score}/{maxScore}</div>
+                            <div className={`text-base sm:text-lg font-semibold ${color} mb-2 sm:mb-3`}>
+                                {level}
+                            </div>
+                            <p className="text-sm sm:text-base text-gray-700">{description}</p>
+                        </div>
+
+                        {!emailSent && !showEmailForm && (
+                            <div className="mb-4">
+                                <button
+                                    onClick={() => setShowEmailForm(true)}
+                                    className="px-5 py-2 sm:py-2.5 bg-green-600 text-white rounded-xl font-medium hover:bg-green-700 transition-colors duration-300 flex items-center gap-2 mx-auto text-sm sm:text-base"
+                                >
+                                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    </svg>
+                                    Kirim Laporan ke Rumah Sakit
+                                </button>
+                            </div>
+                        )}
+
+                        {showEmailForm && !emailSent && (
+                            <div className="mb-4 p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
+                                <h4 className="font-bold text-gray-800 mb-3 text-sm sm:text-base">Kirim Laporan ke Rumah Sakit</h4>
+                                <div className="space-y-3">
+                                    <input
+                                        type="text"
+                                        placeholder="Nama Lengkap"
+                                        value={userName}
+                                        onChange={(e) => setUserName(e.target.value)}
+                                        className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
+                                    />
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={handleSendEmail}
+                                            disabled={isSendingEmail}
+                                            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 transition-colors duration-300 text-sm"
+                                        >
+                                            {isSendingEmail ? 'Mengirim...' : 'Kirim Laporan'}
+                                        </button>
+                                        <button
+                                            onClick={() => setShowEmailForm(false)}
+                                            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300 text-sm"
+                                        >
+                                            Batal
+                                        </button>
+                                    </div>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-2">
+                                    * Laporan akan dikirim ke rumah sakit untuk evaluasi lebih lanjut
+                                </p>
+                            </div>
+                        )}
+
+                        {emailSent && (
+                            <div className="mb-4 p-3 sm:p-4 bg-green-50 border-2 border-green-200 rounded-xl">
+                                <div className="flex items-center justify-center gap-2 text-green-700">
+                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                    </svg>
+                                    <span className="text-sm font-medium">Laporan berhasil dikirim ke rumah sakit!</span>
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+                            <button 
+                                onClick={() => navigate(returnPath)}
+                                className="px-5 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors duration-300 text-sm sm:text-base"
+                            >
+                                Ulangi Assessment
+                            </button>
+                            <button 
+                                onClick={() => navigate('/contact')}
+                                className="px-5 sm:px-6 py-2 sm:py-3 bg-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-300 transition-colors duration-300 text-sm sm:text-base">
+                                Hubungi Kami
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </>
+    );
+}
+
+export default AssessResultPage;
