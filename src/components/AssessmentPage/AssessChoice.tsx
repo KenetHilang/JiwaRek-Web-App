@@ -68,10 +68,10 @@ function AssessChoice() {
                 <div className="w-full max-w-7xl mx-auto">
                     {/* Header */}
                     <div className="text-center mb-8 sm:mb-12">
-                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-3 sm:mb-4 px-4">
+                        <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-3 sm:mb-4 px-4">
                             Pilih Asesmen Anda
                         </h1>
-                        <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-4">
+                        <p className="text-sm sm:text-lg text-gray-600 max-w-2xl mx-auto px-4">
                             Pilih jenis asesmen kesehatan mental yang ingin Anda ikuti. 
                             Semua hasil bersifat rahasia dan dapat membantu Anda memahami kondisi mental Anda.
                         </p>
@@ -106,7 +106,7 @@ function AssessChoice() {
                                 </p>
 
                                 {assessment.available && (
-                                    <button className="w-full py-2 sm:py-2.5 bg-white border-2 border-gray-200 rounded-lg font-medium text-sm sm:text-base text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition-colors duration-200">
+                                    <button className="w-full py-2 sm:py-2.5 bg-white border-2 border-gray-200 rounded-lg font-medium text-sm sm:text-base text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition-colors duration-200 hover:cursor-pointer">
                                         Mulai Asesmen →
                                     </button>
                                 )}

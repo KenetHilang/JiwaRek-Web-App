@@ -39,10 +39,10 @@ function navbar({ currentPage }: { currentPage?: string }) {
                         
                         <div className='hidden md:flex items-center space-x-1'>
                             {navLinks.map((link) => (
-                                <Link key={link.name} to={link.href} className='group relative px-4 py-2 rounded-lg font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 hover:bg-blue-50'>
-                                    <span className='flex items-center space-x-2'>
-                                        <span className={`${link.current ? 'font-bold text-blue-600' : ''}`}>{link.name}</span>
-                                    </span>
+                                <Link key={link.name} to={link.href} className={`group relative px-4 py-2 rounded-lg font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 hover:bg-blue-50 ${link.current ? 'font-bold bg-blue-50' : ''}`}>
+                                    <div className='flex items-center space-x-2'>
+                                        <span className={`${link.current ? 'text-blue-600' : ''}`}>{link.name}</span>
+                                    </div>
                                 </Link>
                             ))}
                             

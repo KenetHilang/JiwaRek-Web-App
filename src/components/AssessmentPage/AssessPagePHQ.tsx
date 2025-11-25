@@ -119,7 +119,10 @@ function assessmentPagePHQ() {
 
     return (
         <>
-            <Navbar />
+            {/* Back Button */}
+            <Navbar currentPage="Assessment" />
+
+
             <div className="mt-16">
                 <Questioncard
                     question={AssessmentQuestionsDepression[currentQuestionIndex].question}

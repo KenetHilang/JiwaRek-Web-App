@@ -69,8 +69,8 @@ function ContactPage() {
     return (
         <>
         <Navbar currentPage="Contact" />
-        <div className="bg-gray-50">
-            <div className="h-screen">
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 ">
+            <div>
                 <div className="grid grid-cols-1 lg:grid-cols-2 h-full pt-16">
                     {/* Contact Information */}
                     <div className="flex flex-col justify-center px-6 lg:px-12 py-12">
@@ -98,7 +98,7 @@ function ContactPage() {
                         )}
                         
                         <form className="space-y-5" onSubmit={handleSubmit}>
-                            <div className="grid grid-cols-2 gap-4">
+                            <div className="sm:grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
                                         First name <span className="text-red-500">*</span>
@@ -113,7 +113,7 @@ function ContactPage() {
                                         className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none placeholder:text-gray-400"
                                     />
                                 </div>
-                                <div>
+                                <div className="sm:mt-0 mt-3">
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
                                         Last name
                                     </label>
@@ -193,7 +193,7 @@ function ContactPage() {
                     </div>
 
                     {/* Map Location */}
-                    <div className="h-[800px] lg:h-full">
+                    <div className="hidden lg:block h-[800px] lg:h-full">
                         <iframe
                             title="Rumah Sakit Menur Location"
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.607743117442!2d112.75958717367612!3d-7.285392192721921!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fbbc4ed41345%3A0x9a7a8ae762918f4e!2sRumah%20Sakit%20Menur%20Provinsi%20Jawa%20Timur!5e0!3m2!1sen!2ssg!4v1762771985888!5m2!1sen!2ssg"
