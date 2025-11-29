@@ -64,16 +64,15 @@ function AssessChoice() {
     return (
         <>
             <Navbar currentPage="Assessments" />
-            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pt-20 sm:pt-24 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center ">
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 mt-5 sm:pt-24 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center ">
                 <div className="w-full max-w-7xl mx-auto">
                     {/* Header */}
                     <div className="text-center mb-8 sm:mb-12">
                         <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-800 mb-3 sm:mb-4 px-4">
-                            Pilih Asesmen Anda
+                            Pilih Assessment Anda 
                         </h1>
                         <p className="text-sm sm:text-lg text-gray-600 max-w-2xl mx-auto px-4">
-                            Pilih jenis asesmen kesehatan mental yang ingin Anda ikuti. 
-                            Semua hasil bersifat rahasia dan dapat membantu Anda memahami kondisi mental Anda.
+                            Pilih jenis asesmen kesehatan mental yang ingin Anda Tes.
                         </p>
                     </div>
 

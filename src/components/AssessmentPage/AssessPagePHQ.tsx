@@ -16,6 +16,9 @@ function assessmentPagePHQ() {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState<Answer[]>([]);
 
+    /**
+     * Processes and stores the user's answer with calculated weight
+     */
     const handleAnswer = (answer: string) => {
         let calculatedWeight = 0;
         
@@ -43,35 +46,64 @@ function assessmentPagePHQ() {
             weight: calculatedWeight
         };
 
-        setAnswers(prev => [...prev, newAnswer]);
+        setAnswers(prev => {
+            const existingIndex = prev.findIndex(a => a.questionIndex === currentQuestionIndex);
+            if (existingIndex >= 0) {
+                const updated = [...prev];
+                updated[existingIndex] = newAnswer;
+                return updated;
+            } else {
+                return [...prev, newAnswer];
+            }
+        });
+    };
 
-        
-    if (currentQuestionIndex < AssessmentQuestionsDepression.length - 1) {
-            setTimeout(() => {
-                setCurrentQuestionIndex(prev => prev + 1);
-            }, 1200);
+    /**
+     * Advances to the next question or navigates to results page
+     */
+    const handleNext = () => {
+        if (currentQuestionIndex < AssessmentQuestionsDepression.length - 1) {
+            setCurrentQuestionIndex(prev => prev + 1);
         } else {
-            setTimeout(() => {
-                const score = [...answers, newAnswer].reduce((total, answer) => total + answer.weight, 0);
-                const interpretation = getScoreInterpretation(score);
-                
-                navigate('/assessment/result', {
-                    state: {
-                        score,
-                        maxScore: '27',
-                        assessmentType: 'PHQ-9 Depression Screening',
-                        level: `Tingkat Depresi: ${interpretation.level}`,
-                        description: interpretation.description,
-                        color: interpretation.color,
-                        bgColor: interpretation.bgColor,
-                        borderColor: interpretation.borderColor,
-                        returnPath: '/assessment/phq9'
-                    }
-                });
-            }, 1200);
+            const finalScore = answers.reduce((total, answer) => total + answer.weight, 0);
+            const interpretation = getScoreInterpretation(finalScore);
+            
+            navigate('/assessment/result', {
+                state: {
+                    score: finalScore,
+                    maxScore: '27',
+                    assessmentType: 'PHQ-9 Depression Screening',
+                    level: `Tingkat Depresi: ${interpretation.level}`,
+                    description: interpretation.description,
+                    color: interpretation.color,
+                    bgColor: interpretation.bgColor,
+                    borderColor: interpretation.borderColor,
+                    returnPath: '/assessment/phq9'
+                }
+            });
         }
     };
 
+    /**
+     * Returns to the previous question
+     */
+    const handlePrevious = () => {
+        if (currentQuestionIndex > 0) {
+            setCurrentQuestionIndex(prev => prev - 1);
+        }
+    };
+
+    /**
+     * Retrieves the saved answer for the current question
+     */
+    const getCurrentAnswer = () => {
+        const answer = answers.find(a => a.questionIndex === currentQuestionIndex);
+        return answer?.answer;
+    };
+
+    /**
+     * Determines depression level and recommendations based on score
+     */
     const getScoreInterpretation = (score: number) => {
         if (score <= 4) {
             return {
@@ -119,11 +151,9 @@ function assessmentPagePHQ() {
 
     return (
         <>
-            {/* Back Button */}
             <Navbar currentPage="Assessment" />
 
-
-            <div className="mt-16">
+            <div className="mt-10">
                 <Questioncard
                     question={AssessmentQuestionsDepression[currentQuestionIndex].question}
                     options={AssessmentQuestionsDepression[currentQuestionIndex].options}
@@ -131,6 +161,11 @@ function assessmentPagePHQ() {
                     questionNumber={currentQuestionIndex + 1}
                     totalQuestions={AssessmentQuestionsDepression.length}
                     onAnswer={handleAnswer}
+                    onPrevious={handlePrevious}
+                    onNext={handleNext}
+                    currentAnswer={getCurrentAnswer()}
+                    canGoBack={currentQuestionIndex > 0}
+                    canGoNext={currentQuestionIndex < AssessmentQuestionsDepression.length}
                 />            
             </div>
         </>

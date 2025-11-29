@@ -16,6 +16,9 @@ function assessmentPage() {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState<Answer[]>([]);
 
+    /**
+     * Processes and stores the user's answer with calculated weight
+     */
     const handleAnswer = (answer: string, weight: number) => {
         const newAnswer: Answer = {
             questionIndex: currentQuestionIndex,
@@ -23,35 +26,64 @@ function assessmentPage() {
             weight: answer === 'Ya' ? weight : 0
         };
 
-        setAnswers(prev => [...prev, newAnswer]);
+        setAnswers(prev => {
+            const existingIndex = prev.findIndex(a => a.questionIndex === currentQuestionIndex);
+            if (existingIndex >= 0) {
+                const updated = [...prev];
+                updated[existingIndex] = newAnswer;
+                return updated;
+            } else {
+                return [...prev, newAnswer];
+            }
+        });
+    };
 
-        
-    if (currentQuestionIndex < AssessmentQuestionsSH.length - 1) {
-            setTimeout(() => {
-                setCurrentQuestionIndex(prev => prev + 1);
-            }, 1200);
+    /**
+     * Advances to the next question or navigates to results page
+     */
+    const handleNext = () => {
+        if (currentQuestionIndex < AssessmentQuestionsSH.length - 1) {
+            setCurrentQuestionIndex(prev => prev + 1);
         } else {
-            setTimeout(() => {
-                const score = [...answers, newAnswer].reduce((total, answer) => total + answer.weight, 0);
-                const interpretation = getScoreInterpretation(score);
-                
-                navigate('/assessment/result', {
-                    state: {
-                        score,
-                        maxScore: '22',
-                        assessmentType: 'Self-Harm Assessment',
-                        level: `Tingkat Risiko: ${interpretation.level}`,
-                        description: interpretation.description,
-                        color: interpretation.color,
-                        bgColor: interpretation.bgColor,
-                        borderColor: interpretation.borderColor,
-                        returnPath: '/assessment/self-harm'
-                    }
-                });
-            }, 1200);
+            const finalScore = answers.reduce((total, answer) => total + answer.weight, 0);
+            const interpretation = getScoreInterpretation(finalScore);
+            
+            navigate('/assessment/result', {
+                state: {
+                    score: finalScore,
+                    maxScore: '22',
+                    assessmentType: 'Self-Harm Assessment',
+                    level: `Tingkat Risiko: ${interpretation.level}`,
+                    description: interpretation.description,
+                    color: interpretation.color,
+                    bgColor: interpretation.bgColor,
+                    borderColor: interpretation.borderColor,
+                    returnPath: '/assessment/self-harm'
+                }
+            });
         }
     };
 
+    /**
+     * Returns to the previous question
+     */
+    const handlePrevious = () => {
+        if (currentQuestionIndex > 0) {
+            setCurrentQuestionIndex(prev => prev - 1);
+        }
+    };
+
+    /**
+     * Retrieves the saved answer for the current question
+     */
+    const getCurrentAnswer = () => {
+        const answer = answers.find(a => a.questionIndex === currentQuestionIndex);
+        return answer?.answer;
+    };
+
+    /**
+     * Determines self-harm risk level based on score
+     */
     const getScoreInterpretation = (score: number) => {
         if (score <= 5) {
             return {
@@ -83,14 +115,21 @@ function assessmentPage() {
     return (
         <>
             <Navbar />
-            <Questioncard
-                question={AssessmentQuestionsSH[currentQuestionIndex].question}
-                options={AssessmentQuestionsSH[currentQuestionIndex].options}
-                weight={AssessmentQuestionsSH[currentQuestionIndex].weight}
-                questionNumber={currentQuestionIndex + 1}
-                totalQuestions={AssessmentQuestionsSH.length}
-                onAnswer={handleAnswer}
-            />
+            <div className="mt-8">
+                <Questioncard
+                    question={AssessmentQuestionsSH[currentQuestionIndex].question}
+                    options={AssessmentQuestionsSH[currentQuestionIndex].options}
+                    weight={AssessmentQuestionsSH[currentQuestionIndex].weight}
+                    questionNumber={currentQuestionIndex + 1}
+                    totalQuestions={AssessmentQuestionsSH.length}
+                    onAnswer={handleAnswer}
+                    onPrevious={handlePrevious}
+                    onNext={handleNext}
+                    currentAnswer={getCurrentAnswer()}
+                    canGoBack={currentQuestionIndex > 0}
+                    canGoNext={currentQuestionIndex < AssessmentQuestionsSH.length}
+                />
+            </div>
         </>
     );
 }

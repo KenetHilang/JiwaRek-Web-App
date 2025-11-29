@@ -5,7 +5,6 @@ import { initEmailJS, sendContactEmail } from "../../utils/emailService";
 function ContactPage() {
     const [contactData, setContactData] = React.useState({
         firstName: "",
-        lastName: "",
         email: "",
         phone: "",
         message: ""
@@ -37,7 +36,7 @@ function ContactPage() {
             initEmailJS();
             
             const emailData = {
-                name: `${contactData.firstName} ${contactData.lastName}`.trim(),
+                name: contactData.firstName,
                 email: contactData.email,
                 phone: contactData.phone,
                 message: contactData.message,
@@ -50,7 +49,6 @@ function ContactPage() {
                 setSendStatus('success');
                 setContactData({
                     firstName: "",
-                    lastName: "",
                     email: "",
                     phone: "",
                     message: ""
@@ -76,7 +74,7 @@ function ContactPage() {
                     <div className="flex flex-col justify-center px-6 lg:px-12 py-12">
                         <h1 className="text-5xl font-bold text-gray-800 mb-3">Contact us</h1>
                         <p className="text-gray-600 mb-8">
-                            Our friendly team would love to hear from you!
+                            Tim Kami ingin Mendengar Lebih Banyak dari Anda! 
                         </p>
                         
                         {sendStatus === 'success' && (
@@ -98,34 +96,19 @@ function ContactPage() {
                         )}
                         
                         <form className="space-y-5" onSubmit={handleSubmit}>
-                            <div className="sm:grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        First name <span className="text-red-500">*</span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="firstName"
-                                        value={contactData.firstName}
-                                        onChange={handleInputChange}
-                                        placeholder="First name"
-                                        required
-                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none placeholder:text-gray-400"
-                                    />
-                                </div>
-                                <div className="sm:mt-0 mt-3">
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                                        Last name
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="lastName"
-                                        value={contactData.lastName}
-                                        onChange={handleInputChange}
-                                        placeholder="Last name"
-                                        className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none placeholder:text-gray-400"
-                                    />
-                                </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    Nama Lengkap <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    name="firstName"
+                                    value={contactData.firstName}
+                                    onChange={handleInputChange}
+                                    placeholder="Nama Anda"
+                                    required
+                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none placeholder:text-gray-400"
+                                />
                             </div>
 
                             <div>
@@ -159,14 +142,14 @@ function ContactPage() {
 
                             <div>
                                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Message <span className="text-red-500">*</span>
+                                    Pesan <span className="text-red-500">*</span>
                                 </label>
                                 <textarea
                                     rows={4}
                                     name="message"
                                     value={contactData.message}
                                     onChange={handleInputChange}
-                                    placeholder="Type your message here..."
+                                    placeholder="Tulis Pesan Anda Disini..."
                                     required
                                     className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none placeholder:text-gray-400"
                                 />
@@ -186,7 +169,7 @@ function ContactPage() {
                                         Mengirim...
                                     </>
                                 ) : (
-                                    'Send message'
+                                    'Kirim Pesan'
                                 )}
                             </button>
                         </form>

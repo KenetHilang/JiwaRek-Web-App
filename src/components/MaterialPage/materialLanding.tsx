@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import Navbar from '../Navbar/navbar';
 import MaterialCards from './MaterialsCard/materialCards';
+import { LifeLine } from 'react-loading-indicators';
+import { GoArrowRight, GoArrowLeft } from "react-icons/go";
 
 interface NewsAPIResponse {
     status: string;
@@ -30,6 +32,9 @@ function MaterialLanding() {
     const articlesPerPage = 9;
     const GetAPI = import.meta.env.VITE_NEWS_API_KEY;
 
+    /**
+     * Fetches articles from the News API
+     */
     const fetchArticles = async () => {
         try {
             console.log('Fetching articles from:', GetAPI);
@@ -54,91 +59,136 @@ function MaterialLanding() {
         fetchArticles();
     }, []);
 
-    // Calculate pagination
     const indexOfLastArticle = currentPage * articlesPerPage;
     const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
     const currentArticles = articles.slice(indexOfFirstArticle, indexOfLastArticle);
     const totalPages = Math.ceil(articles.length / articlesPerPage);
 
+    /**
+     * Handles page navigation and scrolls to top
+     */
     const handlePageChange = (pageNumber: number) => {
         setCurrentPage(pageNumber);
         window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    /**
+     * Generates pagination numbers with ellipsis for mobile-friendly display
+     */
+    const getPageNumbers = () => {
+        const pages: (number | string)[] = [];
+        const maxVisiblePages = 5;
+        
+        if (totalPages <= maxVisiblePages) {
+            for (let i = 1; i <= totalPages; i++) {
+                pages.push(i);
+            }
+        } else {
+            pages.push(1);
+            
+            if (currentPage <= 3) {
+                pages.push(2, 3, 4, '...', totalPages);
+            } else if (currentPage >= totalPages - 2) {
+                pages.push('...', totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
+            } else {
+                pages.push('...', currentPage - 1, currentPage, currentPage + 1, '...', totalPages);
+            }
+        }
+        
+        return pages;
     };
 
     return (
         <>
         <Navbar currentPage='Materials'  />
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 ">
-            <div className="w-full max-w-7xl mx-auto pt-20 sm:pt-24 flex flex-col items-center">
-                <h2 className="text-xl font-semibold mb-1">Blog</h2>
-                <h1 className="text-4xl font-bold mb-6">Articles & Materials</h1>
+            <div className="w-full max-w-7xl mx-auto pt-20 sm:pt-24 flex flex-col items-center justify-center text-center px-2">
+                <h2 className="text-lg sm:text-xl font-semibold mb-1">Blog</h2>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 leading-tight">
+                    Articles & Materials
+                </h1>
             </div>
 
             <div className="flex flex-wrap justify-center">
-                {loading && <p>Loading articles...</p>}
+                {loading && 
+                    <div className='flex flex-col items-center justify-center w-full py-12'>
+                        <LifeLine color="#353a9a" size="medium" text="" textColor="" />
+                        <p className='mt-2'>Sedang Memuat...</p>
+                    </div>}
                 {error && <p className="text-red-500">Error: {error}</p>}
                 {currentArticles.map((article, index) => (
                     <MaterialCards 
-                        key={index}
+                        key={`${currentPage}-${index}`}
+                        index={index}
                         imageURL={article.urlToImage}
                         author={article.author || "Unknown Author"}
                         title={article.title}
                         description={article.description}
                         link={article.url}
-                        publishedDate={new Date(article.publishedAt).toLocaleDateString()}
+                        publishedDate={new Date(article.publishedAt).toLocaleDateString('en-US', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        })}
                     />
                 ))}
             </div>
 
-            {/* Pagination */}
             {!loading && !error && totalPages > 1 && (
                 <div className="flex justify-center mt-8 mb-8">
-                    <div className="flex space-x-2">
-                        {/* Previous Button */}
+                    <div className="flex items-center space-x-1 sm:space-x-2">
                         <button
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1}
-                            className={`px-4 py-2 rounded ${
+                            className={`px-3 py-2 rounded-lg transition-all ${
                                 currentPage === 1
-                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    : 'bg-blue-500 text-white hover:bg-blue-600'
+                                    ? 'text-gray-400 cursor-not-allowed'
+                                    : 'text-blue-600 hover:bg-blue-50 cursor-pointer'
                             }`}
+                            aria-label="Previous page"
                         >
-                            Previous
+                            <GoArrowLeft className="text-xl" />
                         </button>
 
-                        {/* Page Numbers */}
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNumber) => (
-                            <button
-                                key={pageNumber}
-                                onClick={() => handlePageChange(pageNumber)}
-                                className={`px-4 py-2 rounded ${
-                                    currentPage === pageNumber
-                                        ? 'bg-blue-600 text-white'
-                                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                                }`}
-                            >
-                                {pageNumber}
-                            </button>
+                        {getPageNumbers().map((pageNumber, index) => (
+                            pageNumber === '...' ? (
+                                <span 
+                                    key={`ellipsis-${index}`}
+                                    className="px-2 py-2 text-gray-500"
+                                >
+                                    ...
+                                </span>
+                            ) : (
+                                <button
+                                    key={pageNumber}
+                                    onClick={() => handlePageChange(Number(pageNumber))}
+                                    className={`px-4 sm:px-4 py-2 rounded-3xl transition-all font-medium ${
+                                        currentPage === pageNumber
+                                            ? 'bg-blue-600 text-white shadow-md'
+                                            : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300 cursor-pointer'
+                                    }`}
+                                >
+                                    {pageNumber}
+                                </button>
+                            )
                         ))}
 
-                        {/* Next Button */}
                         <button
                             onClick={() => handlePageChange(currentPage + 1)}
                             disabled={currentPage === totalPages}
-                            className={`px-4 py-2 rounded ${
+                            className={`px-3 py-2 rounded-lg transition-all ${
                                 currentPage === totalPages
-                                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                    : 'bg-blue-500 text-white hover:bg-blue-600'
+                                    ? 'text-gray-400 cursor-not-allowed'
+                                    : 'text-blue-600 hover:bg-blue-50 cursor-pointer'
                             }`}
+                            aria-label="Next page"
                         >
-                            Next
+                            <GoArrowRight className="text-xl" />
                         </button>
                     </div>
                 </div>
             )}
 
-            {/* Page Info */}
             {!loading && !error && articles.length > 0 && (
                 <div className="text-center text-gray-600 mb-4">
                     Showing {indexOfFirstArticle + 1} to {Math.min(indexOfLastArticle, articles.length)} of {articles.length} articles

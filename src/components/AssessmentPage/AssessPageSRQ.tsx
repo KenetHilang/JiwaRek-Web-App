@@ -16,6 +16,9 @@ function assessmentPageSRQ() {
     const [answers, setAnswers] = useState<Answer[]>([]);
     const navigate = useNavigate();
 
+    /**
+     * Processes and stores the user's answer with calculated weight
+     */
     const handleAnswer = (answer: string, weight: number) => {
         const newAnswer: Answer = {
             questionIndex: currentQuestionIndex,
@@ -23,35 +26,64 @@ function assessmentPageSRQ() {
             weight: answer === 'Ya' ? weight : 0
         };
 
-        setAnswers(prev => [...prev, newAnswer]);
+        setAnswers(prev => {
+            const existingIndex = prev.findIndex(a => a.questionIndex === currentQuestionIndex);
+            if (existingIndex >= 0) {
+                const updated = [...prev];
+                updated[existingIndex] = newAnswer;
+                return updated;
+            } else {
+                return [...prev, newAnswer];
+            }
+        });
+    };
 
-        
-    if (currentQuestionIndex < AssessmentQuestionsSRQ.length - 1) {
-            setTimeout(() => {
-                setCurrentQuestionIndex(prev => prev + 1);
-            }, 100);
+    /**
+     * Advances to the next question or navigates to results page
+     */
+    const handleNext = () => {
+        if (currentQuestionIndex < AssessmentQuestionsSRQ.length - 1) {
+            setCurrentQuestionIndex(prev => prev + 1);
         } else {
-            setTimeout(() => {
-                const score = [...answers, newAnswer].reduce((total, answer) => total + answer.weight, 0);
-                const interpretation = getScoreInterpretation(score);
-                
-                navigate('/assessment/result', {
-                    state: {
-                        score,
-                        maxScore: '20',
-                        assessmentType: 'SRQ-20 Mental Health Screening',
-                        level: `Tingkat Kesehatan Mental: ${interpretation.level}`,
-                        description: interpretation.description,
-                        color: interpretation.color,
-                        bgColor: interpretation.bgColor,
-                        borderColor: interpretation.borderColor,
-                        returnPath: '/assessment/srq20'
-                    }
-                });
-            }, 800);
+            const finalScore = answers.reduce((total, answer) => total + answer.weight, 0);
+            const interpretation = getScoreInterpretation(finalScore);
+            
+            navigate('/assessment/result', {
+                state: {
+                    score: finalScore,
+                    maxScore: '20',
+                    assessmentType: 'SRQ-20 Mental Health Screening',
+                    level: `Tingkat Kesehatan Mental: ${interpretation.level}`,
+                    description: interpretation.description,
+                    color: interpretation.color,
+                    bgColor: interpretation.bgColor,
+                    borderColor: interpretation.borderColor,
+                    returnPath: '/assessment/srq20'
+                }
+            });
         }
     };
 
+    /**
+     * Returns to the previous question
+     */
+    const handlePrevious = () => {
+        if (currentQuestionIndex > 0) {
+            setCurrentQuestionIndex(prev => prev - 1);
+        }
+    };
+
+    /**
+     * Retrieves the saved answer for the current question
+     */
+    const getCurrentAnswer = () => {
+        const answer = answers.find(a => a.questionIndex === currentQuestionIndex);
+        return answer?.answer;
+    };
+
+    /**
+     * Determines mental health status based on score
+     */
     const getScoreInterpretation = (score: number) => {
         if (score < 6) {
             return {
@@ -75,7 +107,7 @@ function assessmentPageSRQ() {
     return (
         <>
             <Navbar />
-            <div className="mt-16">
+            <div className="mt-12">
                 <Questioncard
                     question={AssessmentQuestionsSRQ[currentQuestionIndex].question}
                     options={AssessmentQuestionsSRQ[currentQuestionIndex].options}
@@ -83,6 +115,11 @@ function assessmentPageSRQ() {
                     questionNumber={currentQuestionIndex + 1}
                     totalQuestions={AssessmentQuestionsSRQ.length}
                     onAnswer={handleAnswer}
+                    onPrevious={handlePrevious}
+                    onNext={handleNext}
+                    currentAnswer={getCurrentAnswer()}
+                    canGoBack={currentQuestionIndex > 0}
+                    canGoNext={currentQuestionIndex < AssessmentQuestionsSRQ.length}
                 />
             </div>
         </>

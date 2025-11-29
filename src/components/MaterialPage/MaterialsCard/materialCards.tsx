@@ -8,15 +8,19 @@ interface MaterialCardProps {
     description: string;
     link: string;
     publishedDate?: string;
+    index?: number;
 }
 
 function MaterialCards({ imageURL, title, author, description, link, publishedDate }: MaterialCardProps) {
+    /**
+     * Replaces broken images with a default error image
+     */
     const handleImageError = (e: any) => {
         e.target.src = ErrorImage;
     };
 
     return (
-        <div className="max-w-sm rounded overflow-hidden shadow-lg m-4 bg-white hover:scale-105 transition-transform duration-300 cursor-pointer" onClick={() => window.open(link, '_blank')}>
+        <div className="max-w-sm rounded-lg overflow-hidden shadow-lg m-4 bg-white border-2 border-gray-300 hover:border-gray-400 hover:scale-110 hover:shadow-xl transition-all duration-300 cursor-pointer" onClick={() => window.open(link, '_blank')}>
             <div className='m-3'>
                 <div className="p-1">
                     <img 
@@ -38,7 +42,7 @@ function MaterialCards({ imageURL, title, author, description, link, publishedDa
 
 
                     <div className="mb-4">
-                        <p className="text-gray-700 text-base overflow-hidden text-sm h-10">
+                        <p className="text-gray-700 overflow-hidden text-sm h-10">
                             {description?.length > 150 ? `${description.substring(0, 150)}...` : description}
                         </p>
                     </div>
