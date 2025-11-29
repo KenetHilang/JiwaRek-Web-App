@@ -71,7 +71,7 @@ function assessmentPagePHQ() {
             navigate('/assessment/result', {
                 state: {
                     score: finalScore,
-                    maxScore: '27',
+                    maxScore: '30',
                     assessmentType: 'PHQ-9 Depression Screening',
                     level: `Tingkat Depresi: ${interpretation.level}`,
                     description: interpretation.description,
