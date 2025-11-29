@@ -7,6 +7,9 @@ export const EMAILJS_CONFIG = {
     PUBLIC_KEY: import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
 };
 
+/**
+ * Initializes EmailJS with public key
+ */
 export const initEmailJS = () => {
     if (!EMAILJS_CONFIG.PUBLIC_KEY) {
         console.error('EmailJS PUBLIC_KEY is missing! Check your .env file.');
@@ -35,6 +38,9 @@ interface ContactData {
     message: string;
 }
 
+/**
+ * Sends assessment results to hospital via email
+ */
 export const sendAssessmentEmail = async (emailData: EmailData): Promise<boolean> => {
     try {
         if (!EMAILJS_CONFIG.SERVICE_ID || !EMAILJS_CONFIG.TEMPLATE_ID || !EMAILJS_CONFIG.PUBLIC_KEY) {
@@ -78,6 +84,9 @@ export const sendAssessmentEmail = async (emailData: EmailData): Promise<boolean
     }
 };
 
+/**
+ * Sends contact form message via email
+ */
 export const sendContactEmail = async (contactData: ContactData): Promise<boolean> => {
     try {
         if (!EMAILJS_CONFIG.SERVICE_ID || !EMAILJS_CONFIG.CONTACT_TEMPLATE_ID || !EMAILJS_CONFIG.PUBLIC_KEY) {

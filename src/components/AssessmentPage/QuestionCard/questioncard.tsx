@@ -78,7 +78,7 @@ function Questioncard({
                                 className={`w-full p-4 rounded-xl text-left text-md font-medium transition-all duration-300 transform hover:scale-[1.02] active:scale-[0.98] ${
                                     selectedOption === option
                                         ? 'bg-blue-600 text-white shadow-lg'
-                                        : 'bg-gray-50 text-gray-700 hover:bg-blue-50 hover:text-blue-700 border-2 border-transparent hover:border-blue-200'
+                                        : 'bg-gray-50 text-gray-700 hover:bg-blue-50 hover:text-blue-700 border-2 border-transparent hover:border-blue-200 cursor-pointer'
                                 }`}
                             >
                                 <div className="flex items-center justify-between">
@@ -106,7 +106,7 @@ function Questioncard({
                                 disabled={!canGoBack}
                                 className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
                                     canGoBack
-                                        ? 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-gray-300'
+                                        ? 'bg-gray-100 text-gray-700 hover:bg-gray-200 border-2 border-gray-300 cursor-pointer'
                                         : 'bg-gray-50 text-gray-400 cursor-not-allowed border-2 border-gray-200'
                                 }`}
                             >
@@ -123,7 +123,7 @@ function Questioncard({
                                 disabled={!canGoNext || !selectedOption}
                                 className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
                                     canGoNext && selectedOption
-                                        ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg'
+                                        ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg cursor-pointer'
                                         : 'bg-gray-50 text-gray-400 cursor-not-allowed border-2 border-gray-200'
                                 }`}
                             >

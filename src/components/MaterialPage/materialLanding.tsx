@@ -111,7 +111,7 @@ function MaterialLanding() {
 
             <div className="flex flex-wrap justify-center">
                 {loading && 
-                    <div className='flex flex-col items-center justify-center w-full py-12'>
+                    <div className='flex flex-col items-center justify-center w-full py-12 mt-12'>
                         <LifeLine color="#353a9a" size="medium" text="" textColor="" />
                         <p className='mt-2'>Sedang Memuat...</p>
                     </div>}

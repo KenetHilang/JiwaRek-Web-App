@@ -26,30 +26,26 @@ function AssessResultPage() {
     const [showEmailForm, setShowEmailForm] = useState(false);
     const [showModal, setShowModal] = useState(false);
 
-    // Show modal automatically for several high-risk levels
+    /**
+     * Displays warning modal for high-risk assessment results
+     */
     useEffect(() => {
         if (!state || !state.level) return;
 
-        // Trigger popup for any of these level keywords (case-insensitive)
-        const triggers = [
-            'berat',
-            'tinggi',
-            'berpotensi mengalami gangguan'
-        ];
-
+        const triggers = ['berat', 'tinggi', 'berpotensi mengalami gangguan'];
         const levelLower = state.level.toLowerCase();
         const shouldShow = triggers.some(t => levelLower.includes(t));
         if (shouldShow) setShowModal(true);
     }, [state]);
 
-    // We'll trap focus inside the modal and prevent background interaction while open.
+    /**
+     * Manages focus trapping and accessibility for the warning modal
+     */
     const modalRef = useRef<HTMLDivElement | null>(null);
     useEffect(() => {
         if (!showModal) return;
 
         const previousActive = document.activeElement as HTMLElement | null;
-
-        // Prevent background scrolling
         const previousOverflow = document.body.style.overflow;
         document.body.style.overflow = 'hidden';
 
@@ -57,7 +53,6 @@ function AssessResultPage() {
         const focusableSelector = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
         const focusable = modal ? Array.from(modal.querySelectorAll<HTMLElement>(focusableSelector)) : [];
 
-        // Focus the first focusable element (the close button)
         if (focusable.length) focusable[0].focus();
 
         const onKeyDown = (e: KeyboardEvent) => {
@@ -73,7 +68,6 @@ function AssessResultPage() {
                     first.focus();
                 }
             }
-            // Do NOT close on Escape to enforce closing only via the X button
         };
 
         window.addEventListener('keydown', onKeyDown);
@@ -92,6 +86,9 @@ function AssessResultPage() {
 
     const { score, maxScore, assessmentType, level, description, color, bgColor, borderColor, returnPath } = state;
 
+    /**
+     * Sends assessment results to hospital via email
+     */
     const handleSendEmail = async () => {
         if (!userName) {
             alert('Mohon isi nama Anda');
@@ -194,7 +191,7 @@ function AssessResultPage() {
                                     </div>
                                 </div>
                                 <p className="text-xs text-gray-500 mt-2">
-                                    * Laporan akan dikirim ke rumah sakit untuk evaluasi lebih lanjut
+                                    Laporan akan dikirim ke rumah sakit untuk evaluasi lebih lanjut
                                 </p>
                             </div>
                         )}
@@ -227,30 +224,24 @@ function AssessResultPage() {
                 </div>
             </div>
 
-            {/* Modal for severe result (image + close) */}
             {showModal && (
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-                    <div
-                        className="absolute inset-0 bg-black/50"
-                    />
+                    <div className="absolute inset-0 bg-black/50" />
 
                     <div ref={modalRef} role="dialog" aria-modal="true" aria-label="Peringatan hasil berat" className="relative bg-white rounded-xl shadow-xl max-w-md w-full p-4 m-4 z-50">
                         <button
                             aria-label="Close popup"
                             onClick={() => setShowModal(false)}
-                            className="absolute top-3 right-3 bg-gray-100 hover:bg-gray-200 rounded-full p-1 focus:outline-none"
+                            className="absolute top-3 right-3 bg-gray-100 hover:bg-gray-200 rounded-full p-1 focus:outline-none cursor-pointer"
                         >
                             <svg className="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
-
+                        
                         <div className="flex flex-col items-center gap-4">
-                            <img src="/popup_warning.png" alt="Peringatan: Hasil Berat" className="w-full h-auto rounded-lg" />
-                            <div className="text-center">
-                                <h4 className="font-bold text-lg">Kamu Menpatkan Hasil Berat</h4>
-                                <p className="text-sm text-gray-600">Hubungi layanan kesehatan profesional, bila diperlukan.</p>
-                            </div>
+                            <img src="/popup_warning.png" alt="Peringatan: Hasil Berat" className="w-full h-auto rounded-lg" 
+                            />
                         </div>
                     </div>
                 </div>

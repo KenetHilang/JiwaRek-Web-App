@@ -11,6 +11,9 @@ const navLinks = [
 function navbar({ currentPage }: { currentPage?: string }) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+    /**
+     * Toggles mobile menu visibility
+     */
     const toggleMenu = () => {
         setIsMenuOpen(!isMenuOpen);
     };
@@ -63,7 +66,6 @@ function navbar({ currentPage }: { currentPage?: string }) {
                         </button>
                     </div>
 
-                    {/* Mobile Menu */}
                     <div className={`md:hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-80 opacity-100 mt-4' : 'max-h-0 opacity-0 overflow-hidden'}`}>
                         <div className='py-4 space-y-2 border-t border-gray-100'>
                             {navLinks.map((link, index) => (
