@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from "../../Navbar/navbar";
 import { sendAssessmentEmail } from '../../../utils/emailService';
@@ -24,6 +24,66 @@ function AssessResultPage() {
     const [isSendingEmail, setIsSendingEmail] = useState(false);
     const [emailSent, setEmailSent] = useState(false);
     const [showEmailForm, setShowEmailForm] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+
+    // Show modal automatically for several high-risk levels
+    useEffect(() => {
+        if (!state || !state.level) return;
+
+        // Trigger popup for any of these level keywords (case-insensitive)
+        const triggers = [
+            'berat',
+            'tinggi',
+            'berpotensi mengalami gangguan'
+        ];
+
+        const levelLower = state.level.toLowerCase();
+        const shouldShow = triggers.some(t => levelLower.includes(t));
+        if (shouldShow) setShowModal(true);
+    }, [state]);
+
+    // We'll trap focus inside the modal and prevent background interaction while open.
+    const modalRef = useRef<HTMLDivElement | null>(null);
+    useEffect(() => {
+        if (!showModal) return;
+
+        const previousActive = document.activeElement as HTMLElement | null;
+
+        // Prevent background scrolling
+        const previousOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';
+
+        const modal = modalRef.current;
+        const focusableSelector = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+        const focusable = modal ? Array.from(modal.querySelectorAll<HTMLElement>(focusableSelector)) : [];
+
+        // Focus the first focusable element (the close button)
+        if (focusable.length) focusable[0].focus();
+
+        const onKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Tab') {
+                if (!focusable.length) return;
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+                if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            }
+            // Do NOT close on Escape to enforce closing only via the X button
+        };
+
+        window.addEventListener('keydown', onKeyDown);
+
+        return () => {
+            window.removeEventListener('keydown', onKeyDown);
+            document.body.style.overflow = previousOverflow;
+            if (previousActive) previousActive.focus();
+        };
+    }, [showModal]);
 
     if (!state || state.score === undefined) {
         navigate('/assessment');
@@ -166,6 +226,35 @@ function AssessResultPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Modal for severe result (image + close) */}
+            {showModal && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+                    <div
+                        className="absolute inset-0 bg-black/50"
+                    />
+
+                    <div ref={modalRef} role="dialog" aria-modal="true" aria-label="Peringatan hasil berat" className="relative bg-white rounded-xl shadow-xl max-w-md w-full p-4 m-4 z-50">
+                        <button
+                            aria-label="Close popup"
+                            onClick={() => setShowModal(false)}
+                            className="absolute top-3 right-3 bg-gray-100 hover:bg-gray-200 rounded-full p-1 focus:outline-none"
+                        >
+                            <svg className="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+
+                        <div className="flex flex-col items-center gap-4">
+                            <img src="/popup_warning.png" alt="Peringatan: Hasil Berat" className="w-full h-auto rounded-lg" />
+                            <div className="text-center">
+                                <h4 className="font-bold text-lg">Kamu Menpatkan Hasil Berat</h4>
+                                <p className="text-sm text-gray-600">Hubungi layanan kesehatan profesional, bila diperlukan.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 }
