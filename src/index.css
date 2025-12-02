@@ -43,3 +43,7 @@
 .animate-pulse-soft {
   animation: pulse-soft 2s infinite;
 }
+
+body {
+  font-family: 'TikTok Sans', sans-serif;
+}

@@ -102,14 +102,16 @@ function MaterialLanding() {
         <>
         <Navbar currentPage='Materials'  />
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 ">
-            <div className="w-full max-w-7xl mx-auto pt-20 sm:pt-24 flex flex-col items-center justify-center text-center px-2">
-                <h2 className="text-lg sm:text-xl font-semibold mb-1">Blog</h2>
-                <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 leading-tight">
-                    Articles & Materials
-                </h1>
+            <div className="text-center bg-blue-400 rounded-b-4xl p-6 sm:p-8 shadow-lg mt-18">
+                    <div>
+                        <p className="text-lg sm:text-2xl font-semibold mb-1 text-gray-100">Blog</p>
+                        <p className="text-3xl md:text-5xl font-bold leading-tight text-gray-100">
+                            Articles & Materials
+                        </p>
+                    </div>
             </div>
 
-            <div className="flex flex-wrap justify-center">
+            <div className="flex flex-wrap justify-center mt-4">
                 {loading && 
                     <div className='flex flex-col items-center justify-center w-full py-12 mt-12'>
                         <LifeLine color="#353a9a" size="medium" text="" textColor="" />
