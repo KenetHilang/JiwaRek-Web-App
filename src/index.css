@@ -46,4 +46,6 @@
 
 body {
   font-family: 'TikTok Sans', sans-serif;
+  background: linear-gradient(to bottom right, rgb(239 246 255), rgb(224 231 255));
+  min-height: 100vh;
 }
