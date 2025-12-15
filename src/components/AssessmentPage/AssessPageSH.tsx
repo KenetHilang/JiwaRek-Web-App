@@ -99,7 +99,7 @@ function assessmentPage() {
                 color: 'text-yellow-600',
                 bgColor: 'bg-yellow-50',
                 borderColor: 'border-yellow-200',
-                description: 'Anda menunjukkan tanda-tanda self-harm ringan. Kurangi stres dan pertimbangkan untuk berkonsultasi dengan profesional kesehatan mental.'
+                description: 'Anda menunjukkan tanda-tanda self-harm ringan. Kurangi stres dan pertimbangkan untuk berkonsultasi dengan nomer di bawah ini.'
             };
         } else {
             return {
@@ -107,7 +107,7 @@ function assessmentPage() {
                 color: 'text-red-600',
                 bgColor: 'bg-red-50',
                 borderColor: 'border-red-200',
-                description: 'Anda menunjukkan tanda-tanda self-harm serius. Segera cari bantuan profesional.'
+                description: 'Anda menunjukkan tanda-tanda self-harm serius. Segera hubungi nomer di bawah ini.'
             };
         }
     };

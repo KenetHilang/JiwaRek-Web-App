@@ -127,7 +127,7 @@ function assessmentPagePHQ() {
                 color: 'text-yellow-600',
                 bgColor: 'bg-yellow-50',
                 borderColor: 'border-yellow-200',
-                description: 'Anda menunjukkan tanda-tanda depresi sedang. Pertimbangkan untuk berkonsultasi dengan profesional kesehatan mental.'
+                description: 'Anda menunjukkan tanda-tanda depresi sedang. Pertimbangkan untuk berkonsultasi dengan nomer di bawah ini.'
             };
         } else if (score <= 19) {
             return {
@@ -135,7 +135,7 @@ function assessmentPagePHQ() {
                 color: 'text-red-600',
                 bgColor: 'bg-red-50',
                 borderColor: 'border-red-200',
-                description: 'Anda menunjukkan tanda-tanda depresi sedang berat. Pertimbangkan untuk mencari bantuan profesional.'
+                description: 'Anda menunjukkan tanda-tanda depresi sedang berat. Pertimbangkan untuk menghubungi nomer di bawah ini.'
             };
         }
         else {
@@ -144,7 +144,7 @@ function assessmentPagePHQ() {
                 color: 'text-red-700',
                 bgColor: 'bg-red-100',
                 borderColor: 'border-red-300',
-                description: 'Anda menunjukkan tanda-tanda depresi berat. Segera cari bantuan profesional.'
+                description: 'Anda menunjukkan tanda-tanda depresi berat. Segera hubungi nomer di bawah ini.'
             };
         }
     };

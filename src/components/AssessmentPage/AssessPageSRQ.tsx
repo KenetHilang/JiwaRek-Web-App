@@ -99,7 +99,7 @@ function assessmentPageSRQ() {
                 color: 'text-red-600',
                 bgColor: 'bg-red-50',
                 borderColor: 'border-red-200',
-                description: 'Anda menunjukkan tanda-tanda gangguan mental emosional atau distres psikologis. Sangat disarankan untuk berkonsultasi dengan profesional kesehatan mental untuk evaluasi lebih lanjut.'
+                description: 'Anda menunjukkan tanda-tanda gangguan mental emosional atau distres psikologis. Sangat disarankan untuk berkonsultasi dengan nomer di bawah ini untuk evaluasi lebih lanjut.'
             };
         }
     };
