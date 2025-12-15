@@ -165,7 +165,7 @@ function AssessResultPage() {
 
                         {/* Action Buttons - Side by Side */}
                         {!emailSent && !showEmailForm && (
-                            <div className="mb-2 flex gap-2 justify-center flex-wrap">
+                            <div className="mb-3 flex gap-2 justify-center flex-wrap">
                                 <button
                                     onClick={() => setShowEmailForm(true)}
                                     className="group flex items-center px-4 py-3 bg-green-600 text-white rounded-4xl font-medium hover:bg-green-700 transition-all duration-300 text-sm sm:text-base cursor-pointer shadow-lg hover:shadow-xl"
@@ -243,7 +243,7 @@ function AssessResultPage() {
                             </div>
                         )}
 
-                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center">
+                        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center sm:mr-9">
                             <button 
                                 onClick={() => navigate(returnPath)}
                                 className="px-5 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors duration-300 text-sm sm:text-base cursor-pointer"
