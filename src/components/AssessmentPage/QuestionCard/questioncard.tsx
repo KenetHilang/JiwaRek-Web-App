@@ -1,5 +1,6 @@
 
 import { useState, useEffect } from 'react';
+import { GoArrowRight, GoArrowLeft } from "react-icons/go";
 
 interface QuestionCardProps {
     question: string;
@@ -66,7 +67,7 @@ function Questioncard({
                 </div>
 
                 <div className="bg-white rounded-2xl shadow-xl p-8 transform transition-all duration-300 hover:shadow-2xl">
-                    <h2 className="text-xl md:text-2xl font-bold text-gray-800 mb-8 text-center leading-relaxed">
+                    <h2 className="text-md md:text-2xl font-bold text-gray-800 mb-8 text-center leading-relaxed">
                         {question}
                     </h2>
                     
@@ -114,7 +115,7 @@ function Questioncard({
                                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                     </svg>
-                                    Sebelumnya
+                                    <p className='hidden md:block'>Sebelumnya</p>
                                 </div>
                             </button>
 
@@ -128,7 +129,7 @@ function Questioncard({
                                 }`}
                             >
                                 <div className="flex items-center">
-                                    Selanjutnya
+                                    <p className='hidden md:block'>Selanjutnya</p>
                                     <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                                     </svg>

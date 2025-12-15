@@ -21,6 +21,8 @@ function AssessResultPage() {
     const state = location.state as LocationState;
     
     const [userName, setUserName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [address, setAddress] = useState('');
     const [isSendingEmail, setIsSendingEmail] = useState(false);
     const [emailSent, setEmailSent] = useState(false);
     const [showEmailForm, setShowEmailForm] = useState(false);
@@ -90,8 +92,8 @@ function AssessResultPage() {
      * Sends assessment results to hospital via email
      */
     const handleSendEmail = async () => {
-        if (!userName) {
-            alert('Mohon isi nama Anda');
+        if (!userName || !phoneNumber || !address) {
+            alert('Mohon isi semua data (nama, nomor HP, dan alamat)');
             return;
         }
 
@@ -104,6 +106,8 @@ function AssessResultPage() {
             level: level,
             description: description,
             userName: userName,
+            phoneNumber: phoneNumber,
+            address: address,
             date: new Date().toLocaleDateString('id-ID', { 
                 weekday: 'long', 
                 year: 'numeric', 
@@ -168,12 +172,12 @@ function AssessResultPage() {
                             <div className="mb-3 flex gap-2 justify-center flex-wrap">
                                 <button
                                     onClick={() => setShowEmailForm(true)}
-                                    className="group flex items-center px-4 py-3 bg-green-600 text-white rounded-4xl font-medium hover:bg-green-700 transition-all duration-300 text-sm sm:text-base cursor-pointer shadow-lg hover:shadow-xl"
+                                    className="group flex items-center px-4 py-3 bg-green-600 text-white rounded-4xl font-medium hover:bg-green-700 transition-all duration-300 text-sm sm:text-base cursor-pointer shadow-lg hover:shadow-xl hover:cursor-pointer"
                                 >
                                     <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                                     </svg>
-                                    <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out">
+                                    <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out ">
                                     &nbsp;Kirim Laporan
                                     </span>
                                 </button>
@@ -198,35 +202,79 @@ function AssessResultPage() {
                         )}
 
                         {showEmailForm && !emailSent && (
-                            <div className="mb-4 p-4 bg-gray-50 rounded-xl border-2 border-gray-200">
-                                <h4 className="font-bold text-gray-800 mb-3 text-sm sm:text-base">Kirim Laporan ke Rumah Sakit</h4>
-                                <div className="space-y-3">
-                                    <input
-                                        type="text"
-                                        placeholder="Nama Lengkap"
-                                        value={userName}
-                                        onChange={(e) => setUserName(e.target.value)}
-                                        className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm"
-                                    />
-                                    <div className="flex gap-2">
-                                        <button
-                                            onClick={handleSendEmail}
-                                            disabled={isSendingEmail}
-                                            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 transition-colors duration-300 text-sm"
-                                        >
-                                            {isSendingEmail ? 'Mengirim...' : 'Kirim Laporan'}
-                                        </button>
-                                        <button
-                                            onClick={() => setShowEmailForm(false)}
-                                            className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300 text-sm"
-                                        >
-                                            Batal
-                                        </button>
+                            <div className="fixed inset-0 z-[9999] flex items-center justify-center">
+                                <div className="absolute inset-0 bg-black/50" onClick={() => setShowEmailForm(false)} />
+                                
+                                <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 m-4 z-50">
+                                    <button
+                                        onClick={() => setShowEmailForm(false)}
+                                        className="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 rounded-full p-2 focus:outline-none cursor-pointer transition-colors"
+                                    >
+                                        <svg className="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+
+                                    <div className="mb-6 sm:mt-0 mt-8">
+                                        <h4 className="sm:text-xl text-md font-bold text-gray-800 mb-2">Kirim Laporan ke Rumah Sakit</h4>
+                                        <p className="text-sm text-gray-600">Mohon isi data diri Anda untuk melanjutkan</p>
                                     </div>
+
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
+                                            <input
+                                                type="text"
+                                                placeholder="Masukkan Nama Lengkap"
+                                                value={userName}
+                                                onChange={(e) => setUserName(e.target.value)}
+                                                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm placeholder:text-gray-400"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Nomor HP</label>
+                                            <input
+                                                type="tel"
+                                                placeholder="Contoh: 081234567890"
+                                                value={phoneNumber}
+                                                onChange={(e) => setPhoneNumber(e.target.value)}
+                                                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm placeholder:text-gray-400"
+                                            />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap</label>
+                                            <textarea
+                                                placeholder="Masukkan Alamat Lengkap"
+                                                value={address}
+                                                onChange={(e) => setAddress(e.target.value)}
+                                                rows={3}
+                                                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm resize-none placeholder:text-gray-400"
+                                            />
+                                        </div>
+
+                                        <div className="flex gap-3 pt-2">
+                                            <button
+                                                onClick={handleSendEmail}
+                                                disabled={isSendingEmail}
+                                                className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300 text-sm"
+                                            >
+                                                {isSendingEmail ? 'Mengirim...' : 'Kirim Laporan'}
+                                            </button>
+                                            <button
+                                                onClick={() => setShowEmailForm(false)}
+                                                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300 text-sm"
+                                            >
+                                                Batal
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <p className="text-xs text-gray-500 mt-4 text-center">
+                                        Laporan akan dikirim ke rumah sakit untuk evaluasi lebih lanjut
+                                    </p>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-2">
-                                    Laporan akan dikirim ke rumah sakit untuk evaluasi lebih lanjut
-                                </p>
                             </div>
                         )}
 

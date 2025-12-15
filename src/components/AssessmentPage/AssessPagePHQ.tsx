@@ -153,7 +153,7 @@ function assessmentPagePHQ() {
         <>
             <Navbar currentPage="Assessment" />
 
-            <div className="mt-10">
+            <div className="mt-20 sm:mt-9">
                 <Questioncard
                     question={AssessmentQuestionsDepression[currentQuestionIndex].question}
                     options={AssessmentQuestionsDepression[currentQuestionIndex].options}

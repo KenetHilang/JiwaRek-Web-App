@@ -28,6 +28,8 @@ interface EmailData {
     userName: string;
     date: string;
     userEmail?: string;
+    phoneNumber?: string;
+    address?: string;
 }
 
 interface ContactData {
@@ -62,6 +64,8 @@ export const sendAssessmentEmail = async (emailData: EmailData): Promise<boolean
             result_level: emailData.level,
             interpretation: emailData.description,
             submission_time: new Date().toLocaleTimeString('id-ID'),
+            patient_phone: emailData.phoneNumber || '-',
+            patient_address: emailData.address || '-',
         };
 
         console.log('Sending assessment email with params:', templateParams);
