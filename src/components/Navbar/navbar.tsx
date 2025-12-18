@@ -79,11 +79,6 @@ function navbar({ currentPage }: { currentPage?: string }) {
                                     <span className='font-medium'>{link.name}</span>
                                 </a>
                             ))}
-                            <div className='pt-4 px-4'>
-                                <button className='w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all duration-300 shadow-lg'>
-                                    Mulai Sekarang
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>

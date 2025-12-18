@@ -85,7 +85,7 @@ function AssessResultPage() {
         return null;
     }
 
-    const { score, maxScore, assessmentType, level, description, color, bgColor, borderColor, returnPath, biodata } = state;
+    const { score, maxScore, assessmentType, level, description, color, bgColor, borderColor, biodata } = state;
 
     const sendAttemptedRef = useRef(false);
     useEffect(() => {

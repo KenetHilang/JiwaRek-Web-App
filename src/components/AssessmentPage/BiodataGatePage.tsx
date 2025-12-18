@@ -31,7 +31,7 @@ export default function BiodataGatePage() {
                             Isi Biodata
                         </h1>
                         <p className="text-sm sm:text-lg text-gray-100 max-w-2xl mx-auto px-4">
-                            Silakan isi biodata sebelum memulai assessment.
+                            Silakan isi biodata sebelum memulai assessment. Data ini akan digunakan untuk pengiriman laporan hasil assessment Anda. Data Anda akan dijaga kerahasiaannya.
                         </p>
                     </div>
                 </div>
