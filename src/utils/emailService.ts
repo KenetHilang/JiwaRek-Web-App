@@ -26,6 +26,8 @@ interface EmailData {
     level: string;
     description: string;
     userName: string;
+    age: number;
+    gender: string;
     date: string;
     userEmail?: string;
     phoneNumber?: string;
@@ -57,6 +59,8 @@ export const sendAssessmentEmail = async (emailData: EmailData): Promise<boolean
 
         const templateParams = {
             patient_name: emailData.userName,
+            patient_age: emailData.age,
+            patient_gender: emailData.gender,
             assessment_type: emailData.assessmentType,
             assessment_date: emailData.date,
             score: emailData.score,

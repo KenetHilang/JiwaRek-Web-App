@@ -1,6 +1,5 @@
 
 import { useState, useEffect } from 'react';
-import { GoArrowRight, GoArrowLeft } from "react-icons/go";
 
 interface QuestionCardProps {
     question: string;

@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from "../Navbar/navbar";
 import Questioncard from "./QuestionCard/questioncard";
 import { AssessmentQuestionsSH } from './Questions/AssessmentQs';
+import type { Biodata } from './BiodataForm';
 
 
 interface Answer {
@@ -12,9 +13,16 @@ interface Answer {
 }
 
 function assessmentPage() {
+    const location = useLocation();
     const navigate = useNavigate();
+    const biodata = (location.state as { biodata?: Biodata } | null)?.biodata;
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [answers, setAnswers] = useState<Answer[]>([]);
+
+    if (!biodata) {
+        navigate('/assessment/biodata', { state: { next: location.pathname } });
+        return null;
+    }
 
     /**
      * Processes and stores the user's answer with calculated weight
@@ -58,7 +66,8 @@ function assessmentPage() {
                     color: interpretation.color,
                     bgColor: interpretation.bgColor,
                     borderColor: interpretation.borderColor,
-                    returnPath: '/assessment/self-harm'
+                    returnPath: '/assessment/self-harm',
+                    biodata,
                 }
             });
         }

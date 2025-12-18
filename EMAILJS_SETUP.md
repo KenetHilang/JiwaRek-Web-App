@@ -116,6 +116,18 @@
                 <span class="label">Nama Pasien:</span> {{patient_name}}
             </div>
             <div class="info-row">
+                <span class="label">Usia:</span> {{patient_age}}
+            </div>
+            <div class="info-row">
+                <span class="label">Jenis Kelamin:</span> {{patient_gender}}
+            </div>
+            <div class="info-row">
+                <span class="label">Nomor HP:</span> {{patient_phone}}
+            </div>
+            <div class="info-row">
+                <span class="label">Alamat:</span> {{patient_address}}
+            </div>
+            <div class="info-row">
                 <span class="label">Tanggal Assessment:</span> {{assessment_date}}
             </div>
             <div class="info-row">
@@ -172,20 +184,17 @@ export const EMAILJS_CONFIG = {
 
 ## Step 6: Configure Hospital Email
 
-1. Open `src/components/AssessmentPage/AssessPagePHQ.tsx`
-2. Update the hospital email constant on line 24:
-```typescript
-const HOSPITAL_EMAIL = 'your-hospital@example.com'; // Replace with actual hospital email
-```
+Konfigurasi penerima email dilakukan di dashboard EmailJS (template settings / service) sesuai akun yang dipakai.
 
 ## Step 7: Test the Integration
 
 1. Run your application: `pnpm run dev`
-2. Complete an assessment
-3. Click "Kirim Laporan ke Rumah Sakit"
-4. Fill in patient name
-5. Click "Kirim Laporan"
-6. Check the hospital email inbox!
+2. Buka menu Assessment
+3. Pilih salah satu assessment
+4. Isi biodata (Usia + Jenis Kelamin wajib)
+5. Selesaikan assessment sampai halaman hasil
+6. Laporan akan terkirim otomatis (tanpa tombol submit)
+7. Check inbox email penerima di EmailJS service!
 
 ## EmailJS Free Tier Limits
 
@@ -198,6 +207,10 @@ const HOSPITAL_EMAIL = 'your-hospital@example.com'; // Replace with actual hospi
 These variables are automatically populated in the HTML template:
 - `{{hospital_email}}` - Hospital's email address (recipient)
 - `{{patient_name}}` - Patient's name
+- `{{patient_age}}` - Patient's age
+- `{{patient_gender}}` - Patient's gender
+- `{{patient_phone}}` - Patient phone number (optional)
+- `{{patient_address}}` - Patient address (optional)
 - `{{assessment_type}}` - Type of assessment (PHQ-9, SRQ-20, Self-Harm)
 - `{{assessment_date}}` - Date of assessment
 - `{{submission_time}}` - Time when assessment was submitted

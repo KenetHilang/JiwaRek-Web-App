@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Navbar from "../../Navbar/navbar";
 import { sendAssessmentEmail } from '../../../utils/emailService';
+import type { Biodata } from '../BiodataForm';
 
 interface LocationState {
     score: number;
@@ -13,19 +14,17 @@ interface LocationState {
     bgColor: string;
     borderColor: string;
     returnPath: string;
+    biodata: Biodata;
 }
 
 function AssessResultPage() {
     const location = useLocation();
     const navigate = useNavigate();
     const state = location.state as LocationState;
-    
-    const [userName, setUserName] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [address, setAddress] = useState('');
+
     const [isSendingEmail, setIsSendingEmail] = useState(false);
     const [emailSent, setEmailSent] = useState(false);
-    const [showEmailForm, setShowEmailForm] = useState(false);
+    const [emailError, setEmailError] = useState<string | null>(null);
     const [showModal, setShowModal] = useState(false);
 
     /**
@@ -86,47 +85,52 @@ function AssessResultPage() {
         return null;
     }
 
-    const { score, maxScore, assessmentType, level, description, color, bgColor, borderColor, returnPath } = state;
+    const { score, maxScore, assessmentType, level, description, color, bgColor, borderColor, returnPath, biodata } = state;
 
-    /**
-     * Sends assessment results to hospital via email
-     */
-    const handleSendEmail = async () => {
-        if (!userName || !phoneNumber || !address) {
-            alert('Mohon isi semua data (nama, nomor HP, dan alamat)');
-            return;
-        }
+    const sendAttemptedRef = useRef(false);
+    useEffect(() => {
+        if (!biodata) return;
+        if (sendAttemptedRef.current) return;
+        if (emailSent || isSendingEmail) return;
 
-        setIsSendingEmail(true);
-        
-        const emailData = {
-            assessmentType: assessmentType,
-            score: score.toString(),
-            maxScore: maxScore,
-            level: level,
-            description: description,
-            userName: userName,
-            phoneNumber: phoneNumber,
-            address: address,
-            date: new Date().toLocaleDateString('id-ID', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric' 
-            }),
+        // React 18 StrictMode runs effects twice in dev; this prevents double send.
+        sendAttemptedRef.current = true;
+
+        const run = async () => {
+            setEmailError(null);
+            setIsSendingEmail(true);
+
+            const emailData = {
+                assessmentType,
+                score: score.toString(),
+                maxScore,
+                level,
+                description,
+                userName: biodata.userName ?? 'Anonim',
+                phoneNumber: biodata.phoneNumber,
+                address: biodata.address,
+                age: biodata.age,
+                gender: biodata.gender,
+                date: new Date().toLocaleDateString('id-ID', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                }),
+            };
+
+            const success = await sendAssessmentEmail(emailData);
+            setIsSendingEmail(false);
+
+            if (success) {
+                setEmailSent(true);
+            } else {
+                setEmailError('Gagal mengirim laporan otomatis. Silakan screenshot hasil Anda atau hubungi kami.');
+            }
         };
 
-        const success = await sendAssessmentEmail(emailData);
-        setIsSendingEmail(false);
-        
-        if (success) {
-            setEmailSent(true);
-            setShowEmailForm(false);
-            alert('Laporan assessment telah dikirim ke rumah sakit!');
-        } else {
-            alert('Gagal mengirim laporan. Silakan coba lagi atau screenshot hasil Anda.');
-        }
-    };
+        void run();
+    }, [assessmentType, biodata, description, emailSent, isSendingEmail, level, maxScore, score]);
 
     // WhatsApp button visibility logic
     const showWhatsAppButton = ['tinggi', 'berat', 'sangat berat', 'berpotensi', 'berisiko']
@@ -167,133 +171,46 @@ function AssessResultPage() {
                             <p className="text-sm sm:text-base text-gray-700">{description}</p>
                         </div>
 
-                        {/* Action Buttons - Side by Side */}
-                        {!emailSent && !showEmailForm && (
-                            <div className="mb-3 flex gap-2 justify-center flex-wrap">
-                                <button
-                                    onClick={() => setShowEmailForm(true)}
-                                    className="group flex items-center px-4 py-3 bg-green-600 text-white rounded-4xl font-medium hover:bg-green-700 transition-all duration-300 text-sm sm:text-base cursor-pointer shadow-lg hover:shadow-xl hover:cursor-pointer"
+                        {/* Auto email status + WhatsApp */}
+                        <div className="mb-3 flex gap-2 justify-center flex-wrap">
+                            {isSendingEmail && (
+                                <div className="px-4 py-3 bg-blue-50 border-2 border-blue-200 rounded-xl text-blue-700 text-sm font-medium">
+                                    Mengirim laporan otomatis…
+                                </div>
+                            )}
+
+                            {!isSendingEmail && emailSent && (
+                                <div className="px-4 py-3 bg-green-50 border-2 border-green-200 rounded-xl text-green-700 text-sm font-medium">
+                                    Laporan berhasil dikirim otomatis.
+                                </div>
+                            )}
+
+                            {!isSendingEmail && !emailSent && emailError && (
+                                <div className="px-4 py-3 bg-red-50 border-2 border-red-200 rounded-xl text-red-700 text-sm font-medium">
+                                    {emailError}
+                                </div>
+                            )}
+
+                            {showWhatsAppButton && (
+                                <a
+                                    href={whatsappUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="group flex items-center px-4 py-3 bg-green-500 text-white rounded-4xl font-medium hover:bg-green-600 transition-all duration-300 text-sm sm:text-base cursor-pointer shadow-lg hover:shadow-xl"
                                 >
-                                    <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                    <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
+                                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
                                     </svg>
-                                    <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out ">
-                                    &nbsp;Kirim Laporan
+                                    <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out">
+                                    &nbsp;Chat WhatsApp
                                     </span>
-                                </button>
-
-                                {/* WhatsApp Button - Icon only, expands on hover */}
-                                {showWhatsAppButton && (
-                                    <a
-                                        href={whatsappUrl}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="group flex items-center px-4 py-3 bg-green-500 text-white rounded-4xl font-medium hover:bg-green-600 transition-all duration-300 text-sm sm:text-base cursor-pointer shadow-lg hover:shadow-xl"
-                                    >
-                                        <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
-                                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                                        </svg>
-                                        <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out">
-                                        &nbsp;Chat WhatsApp
-                                        </span>
-                                    </a>
-                                )}
-                            </div>
-                        )}
-
-                        {showEmailForm && !emailSent && (
-                            <div className="fixed inset-0 z-[9999] flex items-center justify-center">
-                                <div className="absolute inset-0 bg-black/50" onClick={() => setShowEmailForm(false)} />
-                                
-                                <div className="relative bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 m-4 z-50">
-                                    <button
-                                        onClick={() => setShowEmailForm(false)}
-                                        className="absolute top-4 right-4 bg-gray-100 hover:bg-gray-200 rounded-full p-2 focus:outline-none cursor-pointer transition-colors"
-                                    >
-                                        <svg className="w-5 h-5 text-gray-700" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </button>
-
-                                    <div className="mb-6 sm:mt-0 mt-8">
-                                        <h4 className="sm:text-xl text-md font-bold text-gray-800 mb-2">Kirim Laporan ke Rumah Sakit</h4>
-                                        <p className="text-sm text-gray-600">Mohon isi data diri Anda untuk melanjutkan</p>
-                                    </div>
-
-                                    <div className="space-y-4">
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                                            <input
-                                                type="text"
-                                                placeholder="Masukkan Nama Lengkap"
-                                                value={userName}
-                                                onChange={(e) => setUserName(e.target.value)}
-                                                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm placeholder:text-gray-400"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Nomor HP</label>
-                                            <input
-                                                type="tel"
-                                                placeholder="Contoh: 081234567890"
-                                                value={phoneNumber}
-                                                onChange={(e) => setPhoneNumber(e.target.value)}
-                                                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm placeholder:text-gray-400"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <label className="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap</label>
-                                            <textarea
-                                                placeholder="Masukkan Alamat Lengkap"
-                                                value={address}
-                                                onChange={(e) => setAddress(e.target.value)}
-                                                rows={3}
-                                                className="w-full px-4 py-2.5 border-2 border-gray-300 rounded-lg focus:border-blue-500 focus:outline-none text-sm resize-none placeholder:text-gray-400"
-                                            />
-                                        </div>
-
-                                        <div className="flex gap-3 pt-2">
-                                            <button
-                                                onClick={handleSendEmail}
-                                                disabled={isSendingEmail}
-                                                className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-300 text-sm"
-                                            >
-                                                {isSendingEmail ? 'Mengirim...' : 'Kirim Laporan'}
-                                            </button>
-                                            <button
-                                                onClick={() => setShowEmailForm(false)}
-                                                className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors duration-300 text-sm"
-                                            >
-                                                Batal
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    <p className="text-xs text-gray-500 mt-4 text-center">
-                                        Laporan akan dikirim ke rumah sakit untuk evaluasi lebih lanjut
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-
-                        
-
-                        {emailSent && (
-                            <div className="mb-4 p-3 sm:p-4 bg-green-50 border-2 border-green-200 rounded-xl">
-                                <div className="flex items-center justify-center gap-2 text-green-700">
-                                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                    </svg>
-                                    <span className="text-sm font-medium">Laporan berhasil dikirim ke rumah sakit!</span>
-                                </div>
-                            </div>
-                        )}
+                                </a>
+                            )}
+                        </div>
 
                         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center sm:mr-9">
                             <button 
-                                onClick={() => navigate(returnPath)}
+                                onClick={() => navigate('/assessment')}
                                 className="px-5 sm:px-6 py-2 sm:py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors duration-300 text-sm sm:text-base cursor-pointer"
                             >
                                 Ulangi Assessment

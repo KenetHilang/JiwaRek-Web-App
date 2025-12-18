@@ -6,6 +6,7 @@ import AssessChoice from './components/AssessmentPage/AssessChoice.tsx'
 import AssessmentPageSH from './components/AssessmentPage/AssessPageSH.tsx'
 import AssessmentPagePHQ from './components/AssessmentPage/AssessPagePHQ.tsx'
 import AssessmentPageSRQ from './components/AssessmentPage/AssessPageSRQ.tsx'
+import BiodataGatePage from './components/AssessmentPage/BiodataGatePage.tsx'
 import AssessResultPage from './components/AssessmentPage/Resultpage/AssessResultPage.tsx'
 import ErrorPage from './components/ErrorPage/Error.tsx'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
   {
     path: '/assessment',
     element: <AssessChoice />,
+  },
+  {
+    path: '/assessment/biodata',
+    element: <BiodataGatePage />,
   },
   {
     path: '/assessment/self-harm',

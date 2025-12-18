@@ -56,9 +56,8 @@ function AssessChoice() {
     ];
 
     const handleChoice = (route: string, available: boolean) => {
-        if (available) {
-            navigate(route);
-        }
+        if (!available) return;
+        navigate('/assessment/biodata', { state: { next: route } });
     };
 
     return (
