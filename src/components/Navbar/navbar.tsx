@@ -1,89 +1,95 @@
 import { useState } from 'react';
-import logo from '../../assets/jiwarek_logo.png'
 import { Link } from 'react-router-dom';
+import { RiPhoneFill, RiQuillPenFill, RiServiceFill } from 'react-icons/ri';
+import logo from '../../assets/jiwarek_logo.png';
 
-const navLinks = [
-    { name: 'Assessments', href: '/assessment', current: false},
-    { name: 'Materials', href: '/materials', current: false},
-    { name: 'Contact', href: '/contact', current: false},
-];
-
-function navbar({ currentPage }: { currentPage?: string }) {
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-    /**
-     * Toggles mobile menu visibility
-     */
-    const toggleMenu = () => {
-        setIsMenuOpen(!isMenuOpen);
-    };
-
-    navLinks.forEach(link => {
-        link.current = (link.name === currentPage);
-    });
-
-
-    return (
-            <nav className='fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100 z-[100] transition-all duration-300'>
-                <div className='mx-auto px-5 py-3 m-1'>
-                    <div className='flex justify-between items-center'>
-                    
-                        <div className='flex items-center space-x-3 group'>
-                            <div className='relative'>
-                                <img 
-                                    onClick={ () => window.location.href = '/' }
-                                    className='h-[30px] object-contain transition-transform duration-300 group-hover:scale-110' 
-                                    src={logo} 
-                                    alt="JiwaRek Logo" 
-                                />
-                            </div>
-                        </div>
-
-                        
-                        <div className='hidden md:flex items-center space-x-1'>
-                            {navLinks.map((link) => (
-                                <Link key={link.name} to={link.href} className={`group relative px-4 py-2 rounded-lg font-medium text-gray-700 hover:text-blue-600 transition-all duration-300 hover:bg-blue-50 ${link.current ? 'font-bold bg-blue-50' : ''}`}>
-                                    <div className='flex items-center space-x-2'>
-                                        <span className={`${link.current ? 'text-blue-600' : ''}`}>{link.name}</span>
-                                    </div>
-                                </Link>
-                            ))}
-                            
-    
-                        </div>
-
-                        
-                        <button
-                            onClick={toggleMenu}
-                            className='md:hidden relative w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors duration-300'
-                            aria-label='Toggle menu'
-                        >
-                            <div className='relative w-5 h-5'>
-                                <span className={`absolute block h-0.5 bg-gray-600 transition-all duration-300 ${isMenuOpen ? 'top-2 rotate-45' : 'top-1'}`} style={{width: '20px'}}></span>
-                                <span className={`absolute block h-0.5 bg-gray-600 transition-all duration-300 ${isMenuOpen ? 'opacity-0' : 'top-2'}`} style={{width: '20px'}}></span>
-                                <span className={`absolute block h-0.5 bg-gray-600 transition-all duration-300 ${isMenuOpen ? 'top-2 -rotate-45' : 'top-3'}`} style={{width: '20px'}}></span>
-                            </div>
-                        </button>
-                    </div>
-
-                    <div className={`md:hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-80 opacity-100 mt-4' : 'max-h-0 opacity-0 overflow-hidden'}`}>
-                        <div className='py-4 space-y-2 border-t border-gray-100'>
-                            {navLinks.map((link, index) => (
-                                <a
-                                    key={link.name}
-                                    href={link.href}
-                                    onClick={() => setIsMenuOpen(false)}
-                                    className='flex items-center space-x-3 px-4 py-3 rounded-lg text-gray-700 hover:text-blue-600 hover:bg-blue-50 transition-all duration-300 transform hover:translate-x-2'
-                                    style={{ animationDelay: `${index * 0.1}s` }}
-                                >
-                                    <span className='font-medium'>{link.name}</span>
-                                </a>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </nav>
-    );
+interface NavLink {
+  name: string;
+  href: string;
+  icon?: React.ReactNode;
 }
 
-export default navbar;
+interface NavbarProps {
+  currentPage?: string;
+}
+
+const NAV_LINKS: NavLink[] = [
+  { name: 'Assessments', href: '/assessment', icon: <RiServiceFill /> },
+  { name: 'Materials',   href: '/materials', icon: <RiQuillPenFill /> },
+  { name: 'Contact',     href: '/contact', icon: <RiPhoneFill />},
+];
+
+function Navbar({ currentPage }: NavbarProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const links = NAV_LINKS.map(link => ({
+    ...link,
+    current: link.name === currentPage,
+  }));
+
+  const linkClass = (current: boolean) =>
+    `group relative px-4 py-2 rounded-lg font-medium text-gray-700 hover:text-blue-600 
+     transition-all duration-300 hover:bg-blue-50 
+     ${current ? 'font-bold bg-blue-50 text-blue-600' : ''}`;
+
+  return (
+    <nav className='fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-100 z-[100]'>
+      <div className='mx-auto px-5 py-3 m-1'>
+        <div className='flex justify-between items-center'>
+
+          <img
+            onClick={() => window.location.href = '/'}
+            className='h-[30px] object-contain cursor-pointer hover:scale-110 transition-transform duration-300'
+            src={logo}
+            alt="JiwaRek Logo"
+          />
+
+          {/* Desktop */}
+          <div className='hidden md:flex items-center space-x-2'>
+            {links.map(link => (
+              <Link key={link.name} to={link.href} className={linkClass(link.current)}>
+                <div className={`flex items-center space-x-2 ${link.current ? 'text-blue-600': 'text-gray-700 hover:text-blue-600'}`}>
+                  {link.icon && <span>{link.icon}</span>}
+                  <span>{link.name}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          {/* Hamburger */}
+          <button
+            onClick={() => setIsMenuOpen(prev => !prev)}
+            className='md:hidden w-10 h-10 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors duration-300'
+            aria-label='Toggle menu'
+          >
+            <div className='relative w-5 h-5'>
+              <span className={`absolute block h-0.5 w-5 bg-gray-600 transition-all duration-300 ${isMenuOpen ? 'top-2 rotate-45' : 'top-1'}`} />
+              <span className={`absolute block h-0.5 w-5 bg-gray-600 transition-all duration-300 ${isMenuOpen ? 'opacity-0' : 'top-2'}`} />
+              <span className={`absolute block h-0.5 w-5 bg-gray-600 transition-all duration-300 ${isMenuOpen ? 'top-2 -rotate-45' : 'top-3'}`} />
+            </div>
+          </button>
+        </div>
+
+        {/* Mobile menu */}
+        <div className={`md:hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-80 opacity-100 mt-4' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+          <div className='py-4 space-y-2 border-t border-gray-100'>
+            {links.map((link, i) => (
+              <Link
+                key={link.name}
+                to={link.href}
+                onClick={() => setIsMenuOpen(false)}
+                className={`flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-300 hover:translate-x-2 hover:bg-blue-50 ${link.current ? 'text-blue-600 font-bold': 'text-gray-700 hover:text-blue-600'}`}
+                style={{ animationDelay: `${i * 0.1}s` }}
+              >
+                {link.icon && <span>{link.icon}</span>}
+                <span className='font-medium'>{link.name}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}
+
+export default Navbar;

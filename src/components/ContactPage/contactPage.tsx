@@ -1,196 +1,163 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Navbar from "../Navbar/navbar";
 import { initEmailJS, sendContactEmail } from "../../utils/emailService";
+import { FormField } from "./Form/contactForm";
+import { FiCheckCircle, FiXCircle, FiLoader } from "react-icons/fi";
+
+type Status = 'idle' | 'sending' | 'success' | 'error';
+
+interface ContactForm {
+    firstName: string;
+    email: string;
+    phone: string;
+    message: string;
+}
+
+interface FormErrors {
+    firstName?: string;
+    email?: string;
+    message?: string;
+}
+
+const EMPTY_FORM: ContactForm = { firstName: '', email: '', phone: '', message: '' };
+
+const inputClass = "w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none placeholder:text-gray-400";
+
+function validateForm(data: ContactForm): FormErrors {
+    const errors: FormErrors = {};
+    if (!data.firstName.trim()) errors.firstName = 'Nama wajib diisi';
+    if (!data.email.trim()) errors.email = 'Email wajib diisi';
+    if (!data.message.trim()) errors.message = 'Pesan wajib diisi';
+    return errors;
+}
 
 function ContactPage() {
-    const [contactData, setContactData] = React.useState({
-        firstName: "",
-        email: "",
-        phone: "",
-        message: ""
-    });
-    
-    const [isSending, setIsSending] = React.useState(false);
-    const [sendStatus, setSendStatus] = React.useState<'idle' | 'success' | 'error'>('idle');
+    const [form, setForm] = React.useState<ContactForm>(EMPTY_FORM);
+    const [errors, setErrors] = React.useState<FormErrors>({});
+    const [status, setStatus] = React.useState<Status>('idle');
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    useEffect(() => { initEmailJS(); }, []);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-        setContactData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setForm(prev => ({ ...prev, [name]: value }));
+        if (errors[name as keyof FormErrors]) {
+            setErrors(prev => ({ ...prev, [name]: undefined }));
+        }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
-        if (!contactData.firstName || !contactData.email || !contactData.message) {
-            alert('Mohon isi kolom wajib (Nama, Email, Pesan)');
+
+        const formErrors = validateForm(form);
+        if (Object.keys(formErrors).length > 0) {
+            setErrors(formErrors);
             return;
         }
 
-        setIsSending(true);
-        setSendStatus('idle');
-        
+        setStatus('sending');
         try {
-            initEmailJS();
-            
-            const emailData = {
-                name: contactData.firstName,
-                email: contactData.email,
-                phone: contactData.phone,
-                message: contactData.message,
-                time: new Date().toLocaleString('id-ID')
-            };
-
-            const success = await sendContactEmail(emailData);
-            
-            if (success) {
-                setSendStatus('success');
-                setContactData({
-                    firstName: "",
-                    email: "",
-                    phone: "",
-                    message: ""
-                });
-            } else {
-                setSendStatus('error');
-            }
-        } catch (error) {
-            console.error('Error sending email:', error);
-            setSendStatus('error');
-        } finally {
-            setIsSending(false);
+            const success = await sendContactEmail({
+                ...form,
+                name: form.firstName,
+                time: new Date().toLocaleString('id-ID'),
+            });
+            setStatus(success ? 'success' : 'error');
+            if (success) setForm(EMPTY_FORM);
+        } catch {
+            setStatus('error');
         }
     };
 
     return (
         <>
-        <Navbar currentPage="Contact" />
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 ">
-            <div>
+            <Navbar currentPage="Contact" />
+            <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
                 <div className="grid grid-cols-1 lg:grid-cols-2 h-full pt-16">
-                    {/* Contact Information */}
+
                     <div className="flex flex-col justify-center px-6 lg:px-12 py-12">
-                        <h1 className="text-5xl font-bold text-gray-800 mb-3">Contact us</h1>
-                        <p className="text-gray-600 mb-8">
-                            Tim Kami ingin Mendengar Lebih Banyak dari Anda! 
-                        </p>
-                        
-                        {sendStatus === 'success' && (
-                            <div className="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-lg flex items-center gap-3">
-                                <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                                </svg>
-                                <span className="font-medium">Pesan berhasil dikirim! Kami akan segera merespons.</span>
-                            </div>
+                        <h1 className="text-5xl spline spline-bold text-gray-800 mb-2">Contact us</h1>
+                        <p className="text-gray-500 mb-8">Tim Kami ingin Mendengar Lebih Banyak dari Anda!</p>
+
+                        {status === 'success' && (
+                            <StatusBanner icon={<FiCheckCircle />} color="green" message="Pesan berhasil dikirim! Kami akan segera merespons." />
                         )}
-                        
-                        {sendStatus === 'error' && (
-                            <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg flex items-center gap-3">
-                                <svg className="w-5 h-5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                                </svg>
-                                <span className="font-medium">Gagal mengirim pesan. Silakan coba lagi.</span>
-                            </div>
+                        {status === 'error' && (
+                            <StatusBanner icon={<FiXCircle />} color="red" message="Gagal mengirim pesan. Silakan coba lagi." />
                         )}
-                        
-                        <form className="space-y-5" onSubmit={handleSubmit}>
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Nama Lengkap <span className="text-red-500">*</span>
-                                </label>
-                                <input
-                                    type="text"
-                                    name="firstName"
-                                    value={contactData.firstName}
-                                    onChange={handleInputChange}
-                                    placeholder="Nama Anda"
-                                    required
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none placeholder:text-gray-400"
-                                />
-                            </div>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Email <span className="text-red-500">*</span>
-                                </label>
+                        <form className="space-y-5" onSubmit={handleSubmit} noValidate>
+                            <FormField label="Nama Lengkap" required error={errors.firstName}>
                                 <input
-                                    type="email"
-                                    name="email"
-                                    value={contactData.email}
-                                    onChange={handleInputChange}
-                                    placeholder="you@company.com"
-                                    required
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none placeholder:text-gray-400"
+                                    type="text" name="firstName" value={form.firstName}
+                                    onChange={handleChange} placeholder="Nama Anda"
+                                    className={`${inputClass} ${errors.firstName ? 'border-red-400' : ''}`}
                                 />
-                            </div>
+                            </FormField>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Phone number
-                                </label>
+                            <FormField label="Email" required error={errors.email}>
                                 <input
-                                    type="tel"
-                                    name="phone"
-                                    value={contactData.phone}
-                                    onChange={handleInputChange}
-                                    placeholder="+62 812-3456-7890"
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none placeholder:text-gray-400"
+                                    type="email" name="email" value={form.email}
+                                    onChange={handleChange} placeholder="you@company.com"
+                                    className={`${inputClass} ${errors.email ? 'border-red-400' : ''}`}
                                 />
-                            </div>
+                            </FormField>
 
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-2">
-                                    Pesan <span className="text-red-500">*</span>
-                                </label>
+                            <FormField label="Phone number">
+                                <input
+                                    type="tel" name="phone" value={form.phone}
+                                    onChange={handleChange} placeholder="+62 812-3456-7890"
+                                    className={inputClass}
+                                />
+                            </FormField>
+
+                            <FormField label="Pesan" required error={errors.message}>
                                 <textarea
-                                    rows={4}
-                                    name="message"
-                                    value={contactData.message}
-                                    onChange={handleInputChange}
-                                    placeholder="Tulis Pesan Anda Disini..."
-                                    required
-                                    className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none resize-none placeholder:text-gray-400"
+                                    rows={4} name="message" value={form.message}
+                                    onChange={handleChange} placeholder="Tulis Pesan Anda Disini..."
+                                    className={`${inputClass} resize-none ${errors.message ? 'border-red-400' : ''}`}
                                 />
-                            </div>
+                            </FormField>
 
                             <button
                                 type="submit"
-                                disabled={isSending}
-                                className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center gap-2"
+                                disabled={status === 'sending'}
+                                className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors duration-200 flex items-center justify-center gap-2 hover:cursor-pointer"
                             >
-                                {isSending ? (
-                                    <>
-                                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                        Mengirim...
-                                    </>
-                                ) : (
-                                    'Kirim Pesan'
-                                )}
+                                {status === 'sending'
+                                    ? <><FiLoader className="animate-spin" /> Mengirim...</>
+                                    : 'Kirim Pesan'
+                                }
                             </button>
                         </form>
                     </div>
 
-                    {/* Map Location */}
+                    {/* Map side */}
                     <div className="hidden lg:block h-[800px] lg:h-full">
                         <iframe
                             title="Rumah Sakit Menur Location"
                             src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3957.607743117442!2d112.75958717367612!3d-7.285392192721921!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2dd7fbbc4ed41345%3A0x9a7a8ae762918f4e!2sRumah%20Sakit%20Menur%20Provinsi%20Jawa%20Timur!5e0!3m2!1sen!2ssg!4v1762771985888!5m2!1sen!2ssg"
-                            width="100%"
-                            height="100%"
+                            width="100%" height="100%"
                             style={{ border: 0 }}
-                            allowFullScreen={true}
-                            loading="lazy"
-                        ></iframe>
+                            allowFullScreen loading="lazy"
+                        />
                     </div>
                 </div>
             </div>
-        </div>
         </>
+    );
+}
+
+function StatusBanner({ icon, color, message }: { icon: React.ReactNode; color: 'green' | 'red'; message: string }) {
+    const styles = {
+        green: 'bg-green-50 border-green-200 text-green-700',
+        red: 'bg-red-50 border-red-200 text-red-700',
+    };
+    return (
+        <div className={`mb-6 p-4 border rounded-lg flex items-center gap-3 ${styles[color]}`}>
+            <span className="text-lg flex-shrink-0">{icon}</span>
+            <span className="font-medium">{message}</span>
+        </div>
     );
 }
 

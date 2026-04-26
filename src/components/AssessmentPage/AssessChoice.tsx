@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../Navbar/navbar';
+import { RiArrowRightLine } from 'react-icons/ri';
+import { useState } from 'react';
 
 function AssessChoice() {
     const navigate = useNavigate();
@@ -60,14 +62,16 @@ function AssessChoice() {
         navigate('/assessment/biodata', { state: { next: route } });
     };
 
+    const [biodata, setBiodata] = useState(false)
+
     return (
         <>
             <Navbar currentPage="Assessments" />
-            <div className='bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen pb-8 sm:pb-12 px-4 sm:px-6 lg:px-8 '>
+            <div className='bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen pb-8 sm:pb-4 px-4 sm:px-6 lg:px-8 '>
                 {/* Header */}
                     <div className="text-center bg-blue-400 rounded-b-4xl p-6 sm:p-8 shadow-lg mt-18">
                         <div>
-                            <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold text-gray-100 mb-3 sm:mb-4 px-4">
+                            <h1 className="text-2xl sm:text-4xl md:text-5xl spline spline-bold text-gray-100 mb-3 sm:mb-4 px-4">
                                 Pilih Assessment Anda 
                             </h1>
                             <p className="text-sm sm:text-lg text-gray-100 max-w-2xl mx-auto px-4">
@@ -88,7 +92,7 @@ function AssessChoice() {
                                     onClick={() => handleChoice(assessment.route, assessment.available)}
                                     className={`${assessment.bgColor} ${assessment.borderColor} ${
                                         assessment.available ? assessment.hoverColor + ' cursor-pointer active:scale-95' : 'cursor-not-allowed opacity-60'
-                                    } border-2 rounded-xl sm:rounded-2xl p-5 sm:p-6 transition-all duration-300 transform sm:hover:scale-105 hover:shadow-xl relative min-h-[240px] sm:min-h-[260px] flex flex-col`}
+                                    } border-2 rounded-xl sm:rounded-2xl p-5 sm:p-6 transition-all duration-300 transform sm:hover:scale-105 hover:shadow-xl relative min-h-[240px] sm:min-h-[260px] flex flex-col `}
                                 >
                                     {!assessment.available && (
                                         <div className="absolute top-3 sm:top-4 right-3 sm:right-4 bg-gray-800 text-white text-xs px-2 sm:px-3 py-1 rounded-full">
@@ -100,7 +104,7 @@ function AssessChoice() {
                                         {assessment.icon}
                                     </div>
 
-                                    <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-2">
+                                    <h3 className="text-lg sm:text-lg text-gray-800 mb-2 spline spline-bold">
                                         {assessment.title}
                                     </h3>
 
@@ -109,8 +113,8 @@ function AssessChoice() {
                                     </p>
 
                                     {assessment.available && (
-                                        <button className="w-full py-2 sm:py-2.5 bg-white border-2 border-gray-200 rounded-lg font-medium text-sm sm:text-base text-gray-700 hover:bg-gray-50 active:bg-gray-100 transition-colors duration-200 hover:cursor-pointer">
-                                            Mulai Asesmen →
+                                        <button className="flex justify-end text-gray-800 cursor-pointer">
+                                            <RiArrowRightLine />
                                         </button>
                                     )}
                                 </div>
@@ -126,12 +130,12 @@ function AssessChoice() {
                                     </svg>
                                 </div>
                                 <div>
-                                    <h4 className="font-bold text-gray-800 mb-2 text-sm sm:text-base">Informasi Penting</h4>
+                                    <h4 className="text-gray-800 mb-2 text-sm sm:text-base spline spline-bold">Informasi Penting</h4>
                                     <ul className="text-gray-600 space-y-1 text-xs sm:text-sm">
                                         <li>• Asesmen ini bukan diagnosis medis profesional</li>
-                                        <li>• Hasil dapat membantu Anda memahami kondisi mental Anda</li>
+                                        <li>• Hasil dapat membantu anda memahami kondisi mental anda</li>
                                         <li>• Jika hasil menunjukkan tingkat tinggi, segera hubungi profesional</li>
-                                        <li>• Semua data bersifat anonim dan tidak disimpan</li>
+                                        <li>• Semua data bersifat anonim </li>
                                     </ul>
                                 </div>
                             </div>
