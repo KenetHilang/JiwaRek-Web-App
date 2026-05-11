@@ -14,7 +14,6 @@ import ContactPage from './components/ContactPage/contactPage.tsx'
 import { initEmailJS } from './utils/emailService.ts'
 import MaterialLanding from './components/MaterialPage/materialLanding.tsx'
 
-// Initialize EmailJS
 initEmailJS();
 
 const router = createBrowserRouter([

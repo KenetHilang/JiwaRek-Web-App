@@ -1,10 +1,9 @@
-import { useNavigate } from 'react-router-dom';
-import Navbar from '../Navbar/navbar';
-import { RiArrowRightLine } from 'react-icons/ri';
-import { useState } from 'react';
+import { useNavigate } from 'react-router-dom'
+import Navbar from '../Navbar/navbar'
+import { RiArrowRightLine } from 'react-icons/ri'
 
 function AssessChoice() {
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     const assessments = [
         {
@@ -55,14 +54,12 @@ function AssessChoice() {
             route: '/assessment/self-harm',
             available: true
         }
-    ];
+    ]
 
     const handleChoice = (route: string, available: boolean) => {
-        if (!available) return;
-        navigate('/assessment/biodata', { state: { next: route } });
-    };
-
-    const [biodata, setBiodata] = useState(false)
+        if (!available) return
+        navigate('/assessment/biodata', { state: { next: route } })
+    }
 
     return (
         <>
@@ -80,9 +77,9 @@ function AssessChoice() {
                         </div>
                     </div>
 
-                <div className="justify-center px-0 mt-8 md:px-12 ">
+                <div className="flex justify-center px-0 mt-8 md:px-12 ">
 
-                    <div className="w-full max-w-7xl ">
+                    <div className="w-full max-w-7xl justify-center">
 
                         {/* Assessment Cards */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-8">
@@ -144,7 +141,7 @@ function AssessChoice() {
                 </div>
             </div>
         </>
-    );
+    )
 }
 
-export default AssessChoice;
+export default AssessChoice

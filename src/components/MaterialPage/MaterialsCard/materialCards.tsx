@@ -1,20 +1,20 @@
-import ErrorImage from './../../../assets/no-pic.jpg';
-import { GoArrowUpRight } from "react-icons/go";
+import ErrorImage from './../../../assets/no-pic.jpg'
+import { GoArrowUpRight } from "react-icons/go"
 
 interface MaterialCardProps {
-    imageURL: string;
-    title: string;
-    author: string;
-    description: string;
-    link: string;
-    publishedDate?: string;
-    index?: number;
+    imageURL: string
+    title: string
+    author: string
+    description: string
+    link: string
+    publishedDate?: string
+    index?: number
 }
 
 function MaterialCards({ imageURL, title, author, description, link, publishedDate }: MaterialCardProps) {
     const handleImageError = (e: any) => {
-        e.target.src = ErrorImage;
-    };
+        e.target.src = ErrorImage
+    }
 
     return (
         <div className="group rounded-lg overflow-hidden shadow-lg bg-white border-2 border-gray-300 hover:border-gray-400 cursor-pointer transition-all" onClick={() => window.open(link, '_blank')}>
@@ -51,7 +51,7 @@ function MaterialCards({ imageURL, title, author, description, link, publishedDa
                 </div>
             </div>
         </div>
-    );
+    )
 }
 
-export default MaterialCards;
+export default MaterialCards

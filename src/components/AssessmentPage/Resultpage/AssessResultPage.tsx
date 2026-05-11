@@ -1,104 +1,104 @@
-import { useState, useEffect, useRef } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Navbar from "../../Navbar/navbar";
-import { sendAssessmentEmail } from '../../../utils/emailService';
-import type { Biodata } from '../BiodataForm';
+import { useState, useEffect, useRef } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import Navbar from "../../Navbar/navbar"
+import { sendAssessmentEmail } from '../../../utils/emailService'
+import type { Biodata } from '../BiodataForm'
 
 interface LocationState {
-    score: number;
-    maxScore: string;
-    assessmentType: string;
-    level: string;
-    description: string;
-    color: string;
-    bgColor: string;
-    borderColor: string;
-    returnPath: string;
-    biodata: Biodata;
+    score: number
+    maxScore: string
+    assessmentType: string
+    level: string
+    description: string
+    color: string
+    bgColor: string
+    borderColor: string
+    returnPath: string
+    biodata: Biodata
 }
 
 function AssessResultPage() {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const state = location.state as LocationState;
+    const location = useLocation()
+    const navigate = useNavigate()
+    const state = location.state as LocationState
 
-    const [isSendingEmail, setIsSendingEmail] = useState(false);
-    const [emailSent, setEmailSent] = useState(false);
-    const [emailError, setEmailError] = useState<string | null>(null);
-    const [showModal, setShowModal] = useState(false);
+    const [isSendingEmail, setIsSendingEmail] = useState(false)
+    const [emailSent, setEmailSent] = useState(false)
+    const [emailError, setEmailError] = useState<string | null>(null)
+    const [showModal, setShowModal] = useState(false)
 
     /**
      * Displays warning modal for high-risk assessment results
      */
     useEffect(() => {
-        if (!state || !state.level) return;
+        if (!state || !state.level) return
 
-        const triggers = ['berat', 'tinggi', 'berpotensi mengalami gangguan'];
-        const levelLower = state.level.toLowerCase();
-        const shouldShow = triggers.some(t => levelLower.includes(t));
-        if (shouldShow) setShowModal(true);
-    }, [state]);
+        const triggers = ['berat', 'tinggi', 'berpotensi mengalami gangguan']
+        const levelLower = state.level.toLowerCase()
+        const shouldShow = triggers.some(t => levelLower.includes(t))
+        if (shouldShow) setShowModal(true)
+    }, [state])
 
     /**
      * Manages focus trapping and accessibility for the warning modal
      */
-    const modalRef = useRef<HTMLDivElement | null>(null);
+    const modalRef = useRef<HTMLDivElement | null>(null)
     useEffect(() => {
-        if (!showModal) return;
+        if (!showModal) return
 
-        const previousActive = document.activeElement as HTMLElement | null;
-        const previousOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';
+        const previousActive = document.activeElement as HTMLElement | null
+        const previousOverflow = document.body.style.overflow
+        document.body.style.overflow = 'hidden'
 
-        const modal = modalRef.current;
-        const focusableSelector = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
-        const focusable = modal ? Array.from(modal.querySelectorAll<HTMLElement>(focusableSelector)) : [];
+        const modal = modalRef.current
+        const focusableSelector = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])'
+        const focusable = modal ? Array.from(modal.querySelectorAll<HTMLElement>(focusableSelector)) : []
 
-        if (focusable.length) focusable[0].focus();
+        if (focusable.length) focusable[0].focus()
 
         const onKeyDown = (e: KeyboardEvent) => {
             if (e.key === 'Tab') {
-                if (!focusable.length) return;
-                const first = focusable[0];
-                const last = focusable[focusable.length - 1];
+                if (!focusable.length) return
+                const first = focusable[0]
+                const last = focusable[focusable.length - 1]
                 if (e.shiftKey && document.activeElement === first) {
-                    e.preventDefault();
-                    last.focus();
+                    e.preventDefault()
+                    last.focus()
                 } else if (!e.shiftKey && document.activeElement === last) {
-                    e.preventDefault();
-                    first.focus();
+                    e.preventDefault()
+                    first.focus()
                 }
             }
-        };
+        }
 
-        window.addEventListener('keydown', onKeyDown);
+        window.addEventListener('keydown', onKeyDown)
 
         return () => {
-            window.removeEventListener('keydown', onKeyDown);
-            document.body.style.overflow = previousOverflow;
-            if (previousActive) previousActive.focus();
-        };
-    }, [showModal]);
+            window.removeEventListener('keydown', onKeyDown)
+            document.body.style.overflow = previousOverflow
+            if (previousActive) previousActive.focus()
+        }
+    }, [showModal])
 
     if (!state || state.score === undefined) {
-        navigate('/assessment');
-        return null;
+        navigate('/assessment')
+        return null
     }
 
-    const { score, maxScore, assessmentType, level, description, color, bgColor, borderColor, biodata } = state;
+    const { score, maxScore, assessmentType, level, description, color, bgColor, borderColor, biodata } = state
 
-    const sendAttemptedRef = useRef(false);
+    const sendAttemptedRef = useRef(false)
     useEffect(() => {
-        if (!biodata) return;
-        if (sendAttemptedRef.current) return;
-        if (emailSent || isSendingEmail) return;
+        if (!biodata) return
+        if (sendAttemptedRef.current) return
+        if (emailSent || isSendingEmail) return
 
-        // React 18 StrictMode runs effects twice in dev; this prevents double send.
-        sendAttemptedRef.current = true;
+        // React 18 StrictMode runs effects twice in dev this prevents double send.
+        sendAttemptedRef.current = true
 
         const run = async () => {
-            setEmailError(null);
-            setIsSendingEmail(true);
+            setEmailError(null)
+            setIsSendingEmail(true)
 
             const emailData = {
                 assessmentType,
@@ -117,24 +117,24 @@ function AssessResultPage() {
                     month: 'long',
                     day: 'numeric'
                 }),
-            };
+            }
 
-            const success = await sendAssessmentEmail(emailData);
-            setIsSendingEmail(false);
+            const success = await sendAssessmentEmail(emailData)
+            setIsSendingEmail(false)
 
             if (success) {
-                setEmailSent(true);
+                setEmailSent(true)
             } else {
-                setEmailError('Gagal mengirim laporan otomatis. Silakan screenshot hasil Anda atau hubungi kami.');
+                setEmailError('Gagal mengirim laporan otomatis. Silakan screenshot hasil Anda atau hubungi kami.')
             }
-        };
+        }
 
-        void run();
-    }, [assessmentType, biodata, description, emailSent, isSendingEmail, level, maxScore, score]);
+        void run()
+    }, [assessmentType, biodata, description, emailSent, isSendingEmail, level, maxScore, score])
 
     // WhatsApp button visibility logic
     const showWhatsAppButton = ['tinggi', 'berat', 'sangat berat', 'berpotensi', 'berisiko']
-        .some(keyword => level.toLowerCase().includes(keyword));
+        .some(keyword => level.toLowerCase().includes(keyword))
 
     // WhatsApp message and URL
     const whatsappMessage = encodeURIComponent(
@@ -142,9 +142,9 @@ function AssessResultPage() {
         `Skor: ${score}/${maxScore}\n` +
         `Level: ${level}\n\n` +
         `Saya ingin berkonsultasi lebih lanjut mengenai hasil ini.`
-    );
+    )
 
-    const whatsappUrl = `https://wa.me/6281347275307?text=${whatsappMessage}`;
+    const whatsappUrl = `https://wa.me/6281347275307?text=${whatsappMessage}`
 
     return (
         <>
@@ -202,7 +202,7 @@ function AssessResultPage() {
                                         <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
                                     </svg>
                                     <span className="max-w-0 overflow-hidden whitespace-nowrap group-hover:max-w-xs transition-all duration-300 ease-in-out">
-                                    &nbsp;Chat WhatsApp
+                                    &nbspChat WhatsApp
                                     </span>
                                 </a>
                             )}
@@ -248,7 +248,7 @@ function AssessResultPage() {
                 </div>
             )}
         </>
-    );
+    )
 }
 
-export default AssessResultPage;
+export default AssessResultPage

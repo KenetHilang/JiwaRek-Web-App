@@ -1,31 +1,31 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react'
 
-export type GenderOption = 'Laki-laki' | 'Perempuan';
+export type GenderOption = 'Laki-laki' | 'Perempuan'
 
 export interface Biodata {
-    age: number;
-    gender: GenderOption;
-    userName?: string;
-    phoneNumber?: string;
-    address?: string;
+    age: number
+    gender: GenderOption
+    userName?: string
+    phoneNumber?: string
+    address?: string
 }
 
 interface BiodataFormProps {
-    title?: string;
-    description?: string;
-    initialValue?: Partial<Biodata>;
-    submitLabel?: string;
-    onSubmit: (biodata: Biodata) => void;
+    title?: string
+    description?: string
+    initialValue?: Partial<Biodata>
+    submitLabel?: string
+    onSubmit: (biodata: Biodata) => void
 }
 
 function toInt(value: string): number | null {
-    const trimmed = value.trim();
-    if (!trimmed) return null;
-    const num = Number(trimmed);
-    if (!Number.isFinite(num)) return null;
-    const int = Math.floor(num);
-    if (int <= 0) return null;
-    return int;
+    const trimmed = value.trim()
+    if (!trimmed) return null
+    const num = Number(trimmed)
+    if (!Number.isFinite(num)) return null
+    const int = Math.floor(num)
+    if (int <= 0) return null
+    return int
 }
 
 export default function BiodataForm({
@@ -35,18 +35,18 @@ export default function BiodataForm({
     submitLabel = 'Lanjut',
     onSubmit,
 }: BiodataFormProps) {
-    const [ageText, setAgeText] = useState(initialValue?.age ? String(initialValue.age) : '');
-    const [gender, setGender] = useState<GenderOption | ''>((initialValue?.gender as GenderOption) ?? '');
-    const [userName, setUserName] = useState(initialValue?.userName ?? '');
-    const [phoneNumber, setPhoneNumber] = useState(initialValue?.phoneNumber ?? '');
-    const [address, setAddress] = useState(initialValue?.address ?? '');
+    const [ageText, setAgeText] = useState(initialValue?.age ? String(initialValue.age) : '')
+    const [gender, setGender] = useState<GenderOption | ''>((initialValue?.gender as GenderOption) ?? '')
+    const [userName, setUserName] = useState(initialValue?.userName ?? '')
+    const [phoneNumber, setPhoneNumber] = useState(initialValue?.phoneNumber ?? '')
+    const [address, setAddress] = useState(initialValue?.address ?? '')
 
-    const ageParsed = useMemo(() => toInt(ageText), [ageText]);
-    const canSubmit = Boolean(ageParsed && gender);
+    const ageParsed = useMemo(() => toInt(ageText), [ageText])
+    const canSubmit = Boolean(ageParsed && gender)
 
     const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!ageParsed || !gender) return;
+        e.preventDefault()
+        if (!ageParsed || !gender) return
 
         onSubmit({
             age: ageParsed,
@@ -54,8 +54,8 @@ export default function BiodataForm({
             userName: userName.trim() || undefined,
             phoneNumber: phoneNumber.trim() || undefined,
             address: address.trim() || undefined,
-        });
-    };
+        })
+    }
 
     return (
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-lg p-5 sm:p-6 border-2 border-blue-100">
@@ -78,7 +78,7 @@ export default function BiodataForm({
                         required
                     />
                     {!ageParsed && ageText.trim() !== '' && (
-                        <p className="mt-1 text-xs text-red-600">Usia harus berupa angka &gt; 0.</p>
+                        <p className="mt-1 text-xs text-red-600">Usia harus berupa angka &gt 0.</p>
                     )}
                 </div>
 
@@ -140,5 +140,5 @@ export default function BiodataForm({
                 </button>
             </div>
         </form>
-    );
+    )
 }

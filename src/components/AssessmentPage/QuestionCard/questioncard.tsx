@@ -1,18 +1,18 @@
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'
 
 interface QuestionCardProps {
-    question: string;
-    options: string[];
-    weight: number;
-    questionNumber: number;
-    totalQuestions: number;
-    onAnswer: (answer: string, weight: number) => void;
-    onPrevious?: () => void;
-    onNext?: () => void;
-    currentAnswer?: string;
-    canGoBack?: boolean;
-    canGoNext?: boolean;
+    question: string
+    options: string[]
+    weight: number
+    questionNumber: number
+    totalQuestions: number
+    onAnswer: (answer: string, weight: number) => void
+    onPrevious?: () => void
+    onNext?: () => void
+    currentAnswer?: string
+    canGoBack?: boolean
+    canGoNext?: boolean
 }
 
 function Questioncard({ 
@@ -28,22 +28,22 @@ function Questioncard({
     canGoBack = false,
     canGoNext = false
 }: QuestionCardProps) {
-    const [selectedOption, setSelectedOption] = useState<string | null>(currentAnswer || null);
-    const [isAnswered, setIsAnswered] = useState(!!currentAnswer);
+    const [selectedOption, setSelectedOption] = useState<string | null>(currentAnswer || null)
+    const [isAnswered, setIsAnswered] = useState(!!currentAnswer)
 
     useEffect(() => {
-        setSelectedOption(currentAnswer || null);
-        setIsAnswered(!!currentAnswer);
-    }, [questionNumber, question, currentAnswer]);
+        setSelectedOption(currentAnswer || null)
+        setIsAnswered(!!currentAnswer)
+    }, [questionNumber, question, currentAnswer])
 
     /**
      * Handles user's option selection and saves the answer
      */
     const handleOptionSelect = (option: string) => {
-        setSelectedOption(option);
-        setIsAnswered(true);
-        onAnswer(option, weight);
-    };
+        setSelectedOption(option)
+        setIsAnswered(true)
+        onAnswer(option, weight)
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
@@ -140,4 +140,4 @@ function Questioncard({
     )
 }
 
-export default Questioncard;
+export default Questioncard

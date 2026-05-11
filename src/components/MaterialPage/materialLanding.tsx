@@ -1,56 +1,56 @@
-import { useState, useEffect } from 'react';
-import Navbar from '../Navbar/navbar';
-import MaterialCards from './MaterialsCard/materialCards';
-import { LifeLine } from 'react-loading-indicators';
-import { GoArrowRight, GoArrowLeft } from "react-icons/go";
-import { usePagination } from './Hooks/usePagination';
+import { useState, useEffect } from 'react'
+import Navbar from '../Navbar/navbar'
+import MaterialCards from './MaterialsCard/materialCards'
+import { LifeLine } from 'react-loading-indicators'
+import { GoArrowRight, GoArrowLeft } from "react-icons/go"
+import { usePagination } from './Hooks/usePagination'
 
 interface Article {
-    source: { id: string | null; name: string };
-    author: string;
-    title: string;
-    description: string;
-    url: string;
-    urlToImage: string;
-    publishedAt: string;
-    content: string;
+    source: { id: string | null; name: string }
+    author: string
+    title: string
+    description: string
+    url: string
+    urlToImage: string
+    publishedAt: string
+    content: string
 }
 
 interface NewsAPIResponse {
-    status: string;
-    totalResults: number;
-    articles: Article[];
+    status: string
+    totalResults: number
+    articles: Article[]
 }
 
-const ARTICLES_PER_PAGE = 9;
+const ARTICLES_PER_PAGE = 9
 
 function MaterialLanding() {
-    const [articles, setArticles] = useState<Article[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
-    const { currentPage, setCurrentPage, totalPages, paginated, start, getPageNumbers } = usePagination(articles, ARTICLES_PER_PAGE);
+    const [articles, setArticles] = useState<Article[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
+    const { currentPage, setCurrentPage, totalPages, paginated, start, getPageNumbers } = usePagination(articles, ARTICLES_PER_PAGE)
 
     useEffect(() => {
         const fetchArticles = async () => {
             try {
-                setLoading(true);
-                const response = await fetch(import.meta.env.VITE_NEWS_API_KEY);
-                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-                const data: NewsAPIResponse = await response.json();
-                setArticles(data.articles);
+                setLoading(true)
+                const response = await fetch(import.meta.env.VITE_NEWS_API_KEY)
+                if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`)
+                const data: NewsAPIResponse = await response.json()
+                setArticles(data.articles)
             } catch (err) {
-                setError(err instanceof Error ? err.message : 'An error occurred');
+                setError(err instanceof Error ? err.message : 'An error occurred')
             } finally {
-                setLoading(false);
+                setLoading(false)
             }
-        };
-        fetchArticles();
-    }, []);
+        }
+        fetchArticles()
+    }, [])
 
     const handlePageChange = (page: number) => {
-        setCurrentPage(page);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+        setCurrentPage(page)
+        window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
 
     return (
         <>
@@ -96,7 +96,7 @@ function MaterialLanding() {
 
                 {/* Pagination */}
                 {!loading && !error && totalPages > 1 && (
-                    <div className="flex justify-center items-center mt-10 space-x-1 sm:space-x-2">
+                    <div className="flex justify-center items-center mt-10 space-x-1 sm:space-x-2 mx-4">
                         <button
                             onClick={() => handlePageChange(currentPage - 1)}
                             disabled={currentPage === 1}
@@ -112,7 +112,7 @@ function MaterialLanding() {
                                 <button
                                     key={page}
                                     onClick={() => handlePageChange(Number(page))}
-                                    className={`px-4 py-2 rounded-3xl font-medium transition-all ${currentPage === page ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300 cursor-pointer'}`}
+                                    className={`px-4 py-2 rounded-full font-medium transition-all ${currentPage === page ? 'bg-blue-600 text-white shadow-md' : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300 cursor-pointer'}`}
                                 >
                                     {page}
                                 </button>
@@ -137,7 +137,7 @@ function MaterialLanding() {
                 )}
             </div>
         </>
-    );
+    )
 }
 
-export default MaterialLanding;
+export default MaterialLanding

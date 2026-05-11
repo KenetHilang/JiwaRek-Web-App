@@ -1,16 +1,16 @@
-import { useLocation, useNavigate } from 'react-router-dom';
-import Navbar from '../Navbar/navbar';
-import BiodataForm, { type Biodata } from './BiodataForm';
+import { useLocation, useNavigate } from 'react-router-dom'
+import Navbar from '../Navbar/navbar'
+import BiodataForm, { type Biodata } from './BiodataForm'
 
-type GateState = { next?: string } | null;
+type GateState = { next?: string } | null
 
 export default function BiodataGatePage() {
-    const navigate = useNavigate();
-    const next = (useLocation().state as GateState)?.next;
+    const navigate = useNavigate()
+    const next = (useLocation().state as GateState)?.next
 
     const handleSubmit = (biodata: Biodata) => {
-        navigate(next ?? '/assessment', { state: next ? { biodata } : undefined });
-    };
+        navigate(next ?? '/assessment', { state: next ? { biodata } : undefined })
+    }
 
     return (
         <>
@@ -45,5 +45,5 @@ export default function BiodataGatePage() {
                 </div>
             </div>
         </>
-    );
+    )
 }

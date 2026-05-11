@@ -1,27 +1,27 @@
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Navbar from "../Navbar/navbar";
-import Questioncard from "./QuestionCard/questioncard";
-import { AssessmentQuestionsSH } from './Questions/AssessmentQs';
-import type { Biodata } from './BiodataForm';
+import { useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import Navbar from "../Navbar/navbar"
+import Questioncard from "./QuestionCard/questioncard"
+import { AssessmentQuestionsSH } from './Questions/AssessmentQs'
+import type { Biodata } from './BiodataForm'
 
 
 interface Answer {
-    questionIndex: number;
-    answer: string;
-    weight: number;
+    questionIndex: number
+    answer: string
+    weight: number
 }
 
 function assessmentPage() {
-    const location = useLocation();
-    const navigate = useNavigate();
-    const biodata = (location.state as { biodata?: Biodata } | null)?.biodata;
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [answers, setAnswers] = useState<Answer[]>([]);
+    const location = useLocation()
+    const navigate = useNavigate()
+    const biodata = (location.state as { biodata?: Biodata } | null)?.biodata
+    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
+    const [answers, setAnswers] = useState<Answer[]>([])
 
     if (!biodata) {
-        navigate('/assessment/biodata', { state: { next: location.pathname } });
-        return null;
+        navigate('/assessment/biodata', { state: { next: location.pathname } })
+        return null
     }
 
     /**
@@ -32,29 +32,29 @@ function assessmentPage() {
             questionIndex: currentQuestionIndex,
             answer,
             weight: answer === 'Ya' ? weight : 0
-        };
+        }
 
         setAnswers(prev => {
-            const existingIndex = prev.findIndex(a => a.questionIndex === currentQuestionIndex);
+            const existingIndex = prev.findIndex(a => a.questionIndex === currentQuestionIndex)
             if (existingIndex >= 0) {
-                const updated = [...prev];
-                updated[existingIndex] = newAnswer;
-                return updated;
+                const updated = [...prev]
+                updated[existingIndex] = newAnswer
+                return updated
             } else {
-                return [...prev, newAnswer];
+                return [...prev, newAnswer]
             }
-        });
-    };
+        })
+    }
 
     /**
      * Advances to the next question or navigates to results page
      */
     const handleNext = () => {
         if (currentQuestionIndex < AssessmentQuestionsSH.length - 1) {
-            setCurrentQuestionIndex(prev => prev + 1);
+            setCurrentQuestionIndex(prev => prev + 1)
         } else {
-            const finalScore = answers.reduce((total, answer) => total + answer.weight, 0);
-            const interpretation = getScoreInterpretation(finalScore);
+            const finalScore = answers.reduce((total, answer) => total + answer.weight, 0)
+            const interpretation = getScoreInterpretation(finalScore)
             
             navigate('/assessment/result', {
                 state: {
@@ -69,26 +69,26 @@ function assessmentPage() {
                     returnPath: '/assessment/self-harm',
                     biodata,
                 }
-            });
+            })
         }
-    };
+    }
 
     /**
      * Returns to the previous question
      */
     const handlePrevious = () => {
         if (currentQuestionIndex > 0) {
-            setCurrentQuestionIndex(prev => prev - 1);
+            setCurrentQuestionIndex(prev => prev - 1)
         }
-    };
+    }
 
     /**
      * Retrieves the saved answer for the current question
      */
     const getCurrentAnswer = () => {
-        const answer = answers.find(a => a.questionIndex === currentQuestionIndex);
-        return answer?.answer;
-    };
+        const answer = answers.find(a => a.questionIndex === currentQuestionIndex)
+        return answer?.answer
+    }
 
     /**
      * Determines self-harm risk level based on score
@@ -101,7 +101,7 @@ function assessmentPage() {
                 bgColor: 'bg-green-50',
                 borderColor: 'border-green-200',
                 description: 'Tindakan-Tindakan Anda tergolong Aman. Tetap jaga kesehatan mental Anda dengan pola hidup sehat.'
-            };
+            }
         } else if (score <= 11) {
             return {
                 level: 'Sedang',
@@ -109,7 +109,7 @@ function assessmentPage() {
                 bgColor: 'bg-yellow-50',
                 borderColor: 'border-yellow-200',
                 description: 'Anda menunjukkan tanda-tanda self-harm ringan. Kurangi stres dan pertimbangkan untuk berkonsultasi dengan nomor di bawah ini.'
-            };
+            }
         } else {
             return {
                 level: 'Tinggi',
@@ -117,9 +117,9 @@ function assessmentPage() {
                 bgColor: 'bg-red-50',
                 borderColor: 'border-red-200',
                 description: 'Anda menunjukkan tanda-tanda self-harm serius. Segera hubungi nomor di bawah ini.'
-            };
+            }
         }
-    };
+    }
 
     return (
         <>
@@ -140,7 +140,7 @@ function assessmentPage() {
                 />
             </div>
         </>
-    );
+    )
 }
 
-export default assessmentPage;
+export default assessmentPage

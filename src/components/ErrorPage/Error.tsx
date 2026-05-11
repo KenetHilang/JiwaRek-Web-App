@@ -1,4 +1,4 @@
-import FuzzyText from "../../animations/fuzzytext";
+import FuzzyText from "../../animations/fuzzytext"
 
 function ErrorPage() {
     return (
@@ -12,7 +12,7 @@ function ErrorPage() {
                 Kembali ke Beranda
             </a>
         </div>
-    );
+    )
 }
 
-export default ErrorPage;
+export default ErrorPage
